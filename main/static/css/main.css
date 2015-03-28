@@ -1,4 +1,217 @@
+/*====== HTML TAG OVERRIDES ======*/
 body {
-  font-family: Verdana, Helvetica, sans-serif;
-  background-color: #DDDDDD;
+	font-family: verdana, helvetica, "sans serif";
+	font-size:13px;
+	background-color:#ffffff;
 }
+
+h1 {
+	font-size: 130%;
+	font-weight:bold;
+	margin:0px 0px 20px 0px;
+
+}
+
+h2 {
+	font-size: 120%;
+	font-weight:bold;
+	margin:5px 0px 10px 0;
+}
+
+h3 {
+	font-family:futura,arial narrow,arial;
+	font-size: 110%;
+	font-weight:bold;
+	color:blue;
+	margin:0;
+}
+
+p {
+	padding-left:10px;
+	padding-bottom:2px;
+}
+
+a {
+	text-decoration: none;
+	border: 0px;
+	color: #663333;
+}
+
+a:hover {
+	color:#990000;
+}
+
+
+th, td {
+	font-size:13px;
+	border: 1px solid #999999;
+	text-align:center;
+	padding:1px;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+
+
+th {
+	font-family:futura,arial narrow,arial;
+	font-weight:normal;
+	background-color:#cccccc;
+}
+
+li {
+	font-size:92%;
+	padding:0px;
+	margin:0px;
+	padding-left:5px;
+	list-style-type:none;
+}
+
+
+input:focus {
+    background-color: beige;
+}
+
+button:focus{
+   border-color: brown;
+}
+
+
+#lex_search input{
+    width:200px;
+    padding:0px;
+	margin:0px;
+}
+
+#lex_search input.submit_search{
+    width:100px;
+}
+
+#lex_search label {
+    width:130px;
+    display:inline-block;
+    vertical-align:top;
+    padding:0px;
+	margin:0px;
+}
+
+
+
+/*=== Search Results ===*/
+
+#results_header span {
+    color:white;
+    display:inline-block;
+    width:160px;
+    padding:3px;
+    margin:1px;
+    border: 1px solid darkblue;
+    background-color: darkblue;
+}
+
+#results_header .search_pos {
+    width:100px;
+}
+#results_header .search_gloss {
+    width:300px;
+}
+
+
+#search_results > span {
+    display:inline-block;
+    width:160px;
+    padding:3px;
+	margin:1px;
+    border: 1px solid #CCCCCC;
+}
+
+#search_results .search_pos {
+    width:100px;
+}
+#search_results .search_gloss {
+    width:300px;
+}
+
+#search_results label {
+    width: 130px;
+    display: inline-block;
+    vertical-align:top;
+}
+
+#search_results label.short {
+    width:80px;
+}
+
+#search_results label.v_short {
+    width:10px;
+}
+
+#search_results input.short {
+    width:200px;
+}
+
+
+#search_results .senses{
+   margin-left: 75px;
+   margin-top: 5px;
+   padding: 3px;
+   border: 1px solid gray;
+}
+
+#search_results .senses h4{
+	font-size: 105%;
+	font-weight:bold;
+	font-variant:small-caps;
+	margin:0 0 5px 0;
+	padding:0px;
+	display:inline-block;
+}
+
+#search_results .derivations{
+   margin-left: 134px;
+}
+
+#add_new_entry > span {
+    display:inline-block;
+    width:160px;
+    padding:3px;
+	margin:1px;
+    border: 1px solid green;
+}
+
+#add_new_content {
+    display:none;
+    width:760px;
+    padding-left:15px;
+    background-color:#dddddd;
+}
+
+/*---- General CLASSES ----*/
+
+.button1 {
+    width:100px;
+}
+
+.button2 {
+    border-color: green;
+}
+
+.error{
+    display: none;
+    margin-left: 10px;
+}
+
+.error_show{
+    color: red;
+    margin-left: 10px;
+}
+
+
+.message{
+    font-family:"Courier New", Courier, monospace;
+    font-weight:bold;
+    display:inline-block;
+    color:red;
+}
+
+

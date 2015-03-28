@@ -3,7 +3,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 
 def helloworld(request):
-    return HttpResponse("Hello World :)")
+    return HttpResponse("Hello World :)")#request.META["REMOTE_USER"])
 
 def main_page(request):
     username = "User"

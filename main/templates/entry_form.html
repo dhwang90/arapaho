@@ -1,0 +1,54 @@
+<span style="color:red">(* required fields)</span><br><br>
+
+<label>lexeme<span style="color:red">*</span> (lx):</label>
+<input name="lex" size="80" type="text" class="short required" value="{{ lex|default_if_none:'' }}" id="lex">
+
+<input type="radio" name="language" value="Arapaho" checked >Arapaho
+<input type="radio" name="language" value="English" >English<br>
+
+<label>underlying (mn):</label>
+<input name="base_form" size="80" type="text" class="short" value="{{ base_form|default_if_none:'' }}"><br/>
+
+<label>allolexeme (all):</label>
+<span class="input_fields_wrap">
+    <input name="variant_forms[]" size="20" type="text" class="short">
+    <button class="add_field_button" n="variant_forms[]" type="button">+</button>
+    <br/>
+</span>
+
+<label>pos<span style="color:red">*</span> (ps):</label>
+<input name="pos" size="80" type="text" class="short required" id="pos" value="{{ pos|default_if_none:'' }}"><br/>
+
+<label>gloss<span style="color:red">*</span> (ge) :</label>
+<input name="gloss" size="80" type="text" class="required" value="{{ gloss|default_if_none:'' }}"><br/>
+
+<label>morphology (mr):</label> <input name="morphology" size="80" type="text"><br/>
+<label>literal (lt):</label> <input name="literal" size="80" type="text"><br/>
+
+<label>derivations:</label> <button class="add_deriv_button" n="deriv_value[]" type="button">+</button> <br>
+
+<span class="input_deriv_wrap">
+
+</span>
+<label>etymology (et):</label> <input name="etymology" size="80" type="text"><br/>
+<label>cultural:</label> <textarea name="cultural" cols="80" rows="2" type="text"></textarea><br/>
+
+<!-- SENSES -->
+<span class="sense_wrap">
+
+</span>
+<span class="senses"><button class="add_sense" type="button">Add Sense</button></span>
+
+<input name="lex_item_key" value="NONE" type="text" readonly hidden><br>
+
+<br>
+<button type="button" id="submit_data">Save Changes</button>
+<span id="required_fields_error" class="error">
+Required fields (marked with <span style="color:red">*</span>) must be filled.
+</span>
+
+<span id="duplicate_error" class="error">
+    This entry has existing match(es) in the lexicon (same lx and ps).
+    <button type="button" id="duplicate_save" class="save"> Save Anyway </button> or
+    <button type="button" id="duplicate_cancel" class="cancel_save"> Cancel Save </button>
+</span>

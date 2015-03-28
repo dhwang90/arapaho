@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Arapaho Lexical Dictionary</title>
+    {% load staticfiles %}
+    <link type="text/css" rel="stylesheet" href="{% static "main.css" %}">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static "main.js" %}"></script>
+
+</head>
+<body>
+    <h1>Arapaho Lexical Dictionary</h1>
+    Go To: <a href="/">Main Page</a>
+
+    <h2>Search Lexicon</h2>
+    <div id="lex_search">
+    <form id="search" action="search" method="post" style="display:inline-block;">
+        {% csrf_token %}
+        <label>lex (lx):</label> <input name="lex" type="text" value="{{ lex|default_if_none:'' }}"><br>
+        <label>underlying (mn):</label> <input name="base_form" type="text" value="{{ base_form|default_if_none:'' }}"><br>
+        <label>pos (ps):</label> <input name="pos" type="text" value="{{ pos|default_if_none:'' }}"><br>
+        <label>gloss (ge):</label> <input name="gloss" type="text" value="{{ gloss|default_if_none:'' }}"><br>
+        <br> show <select name="show_count">
+                  <option value="10" {% if show_count == '10' %} selected {% endif %}>10</option>
+                  <option value="25" {% if show_count == '25' %} selected {% endif %}>25</option>
+                  <option value="50" {% if show_count == '50' %} selected {% endif %}>50</option>
+                </select>
+        matches<br/>
+        <br>
+        <input type="submit" value="Search" class="submit_search">
+    </form>
+        <button id="resetSearch" class="button1">Clear Fields</button>
+
+
+
+    </div>
+    <br>
+
+    <!-- IF THERE ARE ANY RESULTS TO DISPLAY -->
+
+    {% if outlist|length > 0 or lex != '' or base_form != '' or pos != '' or gloss != '' %}
+
+    <h2>Search Results</h2>
+    <div id="search_results">
+
+        <div id="results_header">
+            <span class="search_lex">Lexical Item</span>
+            <span class="search_base">Underlying Form</span>
+            <span class="search_pos">POS</span>
+            <span class="search_gloss">Gloss</span>
+        </div>
+
+        <!-- NEW ENTRY -->
+
+        {% if lex != "" %}
+        <div id="add_new_entry">
+            <span class="search_lex">{{ lex }} &nbsp;</span>
+            <span class="search_base">{{ base_form }} &nbsp;</span>
+            <span class="search_pos">{{ pos }} &nbsp;</span>
+            <span class="search_gloss">{{ gloss }} &nbsp;</span>
+
+            <!-- NEW CONTENT ADD -->
+            <button id="modifyButtonNew" class="button1">Add New</button><br>
+            <div id="modifyNew" class="modify" style="display:none;padding:10px 5px 0px 20px;">&nbsp;</div>
+            <script>$(document).ready(modifyEntry('New','none'));</script>
+
+
+            <!--
+            <button id="add_new_button" class="button1 button2" data-href="add_new_content">Add New</button>
+            <div id="add_new_content" class="show_hide">
+
+
+                <form action="new_entry" method="post" id="new_entry">
+
+
+                </form>
+
+
+            </div>
+            -->
+        </div>
+        {% endif %}
+
+
+        <!-- EXISTING ENTRIES -->
+
+            {% for outline in outlist %}
+            <span class="search_lex">{{ outline.lex }} &nbsp;</span>
+            <span class="search_base">{{ outline.base_form }} &nbsp;</span>
+            <span class="search_pos">{{ outline.pos }} &nbsp;</span>
+            <span class="search_gloss">{{ outline.gloss }} &nbsp;</span>
+
+            <button id="modifyButton{{ outline.num }}" class="button1">View/Modify</button><br>
+            <div id="modify{{ outline.num }}" class="modify" style="display:none;padding:10px 5px 0px 20px;">&nbsp;</div>
+            <script>
+                $(document).ready(modifyEntry({{ outline.num }},{{ outline.lexid }}));
+            </script>
+            {% endfor %}
+
+    </div>
+
+    <script>
+    $(document).ready(multipleFields());
+    $(document).ready(multipleDerivations());
+    $(document).ready(multipleSenses());
+    $(document).ready(requireFields());
+    $(document).ready(errorCheck('lex'));
+    </script>
+    {% endif %}
+
+    <script>
+        $(document).ready(resetSearch());
+
+    </script>
+
+
+</body>
+</html>
