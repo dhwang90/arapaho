@@ -1,7 +1,7 @@
-function multipleFields(){
+function multipleFields(lexid){
 
-    var add_button      = $(".add_field_button"); //Add button ID
-    var wrapper         = $(".input_fields_wrap"); //Fields wrapper
+    var add_button      = $(".add_field_button"+lexid); //Add button ID
+    var wrapper         = $(".input_fields_wrap"+lexid); //Fields wrapper
     var max_fields      = 5; //maximum input boxes allowed
 
 
@@ -23,10 +23,10 @@ function multipleFields(){
 
 }
 
-function multipleDerivations(){
+function multipleDerivations(lexid){
 
-    var add_button      = $(".add_deriv_button"); //Add button ID
-    var wrapper         = $(".input_deriv_wrap"); //Fields wrapper
+    var add_button      = $(".add_deriv_button"+lexid); //Add button ID
+    var wrapper         = $(".input_deriv_wrap"+lexid); //Fields wrapper
     var max_fields      = 5; //maximum input boxes allowed
 
 
@@ -36,7 +36,7 @@ function multipleDerivations(){
         if(x < max_fields){ //max input box allowed
             x++; //text box increment
             var add_html = '<div class="derivations">\n'+
-                        '<select name="deriv_type[]" class="deriv_type">\n'+
+                        '<select name="deriv_type" class="deriv_type">\n'+
                             '<option value="0">--Select--</option>\n'+
                             '<option value="pl" class="noun">pl</option>\n'+
                             '<option value="obv.sg" class="na">obv sg</option>\n'+
@@ -46,7 +46,7 @@ function multipleDerivations(){
                             '<option value="voc" class="na">voc</option>\n'+
                             '<option value="s3" class="verb">3 s</option>\n'+
                         '</select>\n'+
-                        '<input name="deriv_value[]" size="20" type="text" class="short">\n'+
+                        '<input name="deriv_value" size="20" type="text" class="short">\n'+
                         '<a href="#" class="remove_field">(remove)</a>'+
                         '</div>';
 
@@ -60,9 +60,9 @@ function multipleDerivations(){
 
 }
 
-function multipleSenses(){
-    var add_sense      = $(".add_sense"); //Add button ID
-    var sense_wrapper  = $(".sense_wrap"); //Fields wrapper
+function multipleSenses(lexid){
+    var add_sense      = $(".add_sense"+lexid); //Add button ID
+    var sense_wrapper  = $(".sense_wrap"+lexid); //Fields wrapper
     var max_senses     = 10; //maximum input boxes allowed
 
     var sense_cnt = 1; //initial text box count
@@ -88,55 +88,6 @@ function multipleSenses(){
     });
 }
 
-function modifyEntry(num,outkey){
-    //var saveModify = [];
-
-    $("#modifyButtonNew").click(function(){
-        alert('Hi');
-    });
-}
-
-//        if($("#modify"+num).is(":visible")) {
-//            $("#modify"+num).css( "display","none");
-//        } else {
-//            $(".modify").css("display","none");
-//
-//
-//            // don't re-query the server if run once. just hide.
-//            if (jQuery.inArray(num,saveModify) == -1) {
-//                if (num == 'New') {
-//
-//                    var outlex = $("span.lex").text().trim();
-//                    var outbase = $("span.base_form").text().trim();
-//                    var outpos = $("span.pos").text().trim();
-//                    var outgloss = $("span.gloss").text().trim();
-//
-//
-//                    $.ajax({
-//                        url: '/newform',
-//                        type: "POST",
-//                        cache: false,
-//                        data: { lex: outlex, base_form:outbase, pos:outpos, gloss:outgloss },
-//                        success: function(html) {
-//                            $("#modify"+num).html(html);
-//                        }
-//                    });
-//                } else {
-//                    $.ajax({
-//                        url: '/modifyform',
-//                        type: "POST",
-//                        cache: false,
-//                        data: { key: outkey },
-//                        success: function(html) {
-//                            $("#modify"+num).html(html);
-//                        }
-//                    });
-//                }
-//                saveModify.push(num)
-//            }
-//            $("#modify"+num).css( "display","block");
-//        }
-
 function modifyPos(num,outkey){
     var saveModify = [];
     $("button#modifyButton"+num).click(function(){
@@ -161,20 +112,6 @@ function modifyPos(num,outkey){
             $("#modify"+num).css( "display","block");
         }
     });
-}
-
-function dataChanged(){
-  $('form')
-    .each(function(){
-        $(this).data('serialized', $(this).serialize())
-    })
-    .on('change input', function(){
-        $(this)
-            .find('input:submit, button:submit')
-                .attr('disabled', $(this).serialize() == $(this).data('serialized'))
-        ;
-     })
-    .find('input:submit, button:submit').attr('disabled', true);
 }
 
 function requireFields(){
@@ -248,18 +185,43 @@ function errorCheck(entity_type){
     });
 }
 
+function dataChanged(lexid){
+    //activate if data changed
+    $('form#modify'+lexid)
+    .each(function(){
+        $(this).data('serialized', $(this).serialize())
+    })
+    .on('change input', function(){
+        $(this)
+            .find('input:submit, button:submit')
+                .attr('disabled', $(this).serialize() == $(this).data('serialized'))
+        ;
+     })
+    .find('input:submit, button:submit').attr('disabled', true);
+}
+
+function submitEntry(lexid){
+    $('#modify'+lexid).on('submit',function(e) {
+        // prevent default submit
+        e.preventDefault();
+        alert($(this).serialize());
+        $.post(this.action,$(this).serialize());
+    });
+}
+
 function slidingDiv(divname) {
     $("#"+divname).click(function(){
         var $div = $('#' + $(this).data('href'));
-        $('.show_hide').not($div).hide();
+        $('.modify').not($div).hide();
         $div.slideToggle();
    });
  }
 
- function resetSearch() {
+function resetSearch() {
     $( "#resetSearch" ).click(function(e) {
         $("div#lex_search input[type=text]").each(function() {
            $(this).val('');
         });
     });
  }
+

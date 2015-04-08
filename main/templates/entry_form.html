@@ -1,54 +1,93 @@
-<span style="color:red">(* required fields)</span><br><br>
+<button class="button1" type="button" id='button_modify{{ lexid }}' data-href="modify{{ lexid }}">
+    {% if lexid == 'New' %}
+        Add New
+    {% elif usertype == 'editor' %}
+        View/Modify
+    {% else %}
+        View
+    {% endif %}
+</button><br>
 
-<label>lexeme<span style="color:red">*</span> (lx):</label>
-<input name="lex" size="80" type="text" class="short required" value="{{ lex|default_if_none:'' }}" id="lex">
+<form action="entry" method="post" id="modify{{ lexid }}" class="modify" style="padding:10px 5px 0px 20px;">
+    {% csrf_token %}
+    <span class="required">(required fields)</span><br><br>
+    <label class="required">lexeme (lx):</label><input name="lex" type="text" class="short required" value="{{ lex|default_if_none:'' }}" id="lex">
+    <label >lexeme (lx):</label>
 
-<input type="radio" name="language" value="Arapaho" checked >Arapaho
-<input type="radio" name="language" value="English" >English<br>
+    {% if language == "English" %}
+        <input type="radio" name="language" value="Arapaho">Arapaho
+        <input type="radio" name="language" value="English" checked>English<br>
+    {% else %}
+        <input type="radio" name="language" value="Arapaho" checked>Arapaho
+        <input type="radio" name="language" value="English">English<br>
+    {% endif %}
 
-<label>underlying (mn):</label>
-<input name="base_form" size="80" type="text" class="short" value="{{ base_form|default_if_none:'' }}"><br/>
+    <label>underlying (mn):</label><input name="base_form" type="text" class="short" value="{{ base_form|default_if_none:'' }}"><br>
 
-<label>allolexeme (all):</label>
-<span class="input_fields_wrap">
-    <input name="variant_forms[]" size="20" type="text" class="short">
-    <button class="add_field_button" n="variant_forms[]" type="button">+</button>
-    <br/>
-</span>
+    <label>allolexeme (all):</label>
+    <span class="input_fields_wrap{{ lexid }}">
+        {% if lexical_item.variant_forms|length == 0 %}
+            <input name="variant_forms" size="20" type="text" class="short">
+        {% else %}
+            {% for vf in variant_forms%}
+                <input name="variant_forms" size="20" type="text" value="{{ vf }}" class="short">
+            {% endfor %}
+        {% endif %}
+        {% if usertype == 'editor' %}
+            <button class="add_field_button{{ lexid }}" n="variant_forms" type="button">+</button>
+        {% endif %}
+        <br>
+    </span>
 
-<label>pos<span style="color:red">*</span> (ps):</label>
-<input name="pos" size="80" type="text" class="short required" id="pos" value="{{ pos|default_if_none:'' }}"><br/>
+    <label class="required">pos (ps):</label><input name="pos" type="text" class="short" required id="pos" value="{{ pos|default_if_none:'' }}"><br>
+    <label class="required">gloss (ge):</label><input name="gloss" type="text" class="long" required value="{{ gloss|default_if_none:'' }}"><br>
+    <label>morphology (mr):</label><input name="morphology" type="text" value="{{ morphology|default_if_none:'' }}"><br>
+    <label>literal (lt):</label><input name="literal" type="text" value="{{ literal|default_if_none:'' }}"><br>
 
-<label>gloss<span style="color:red">*</span> (ge) :</label>
-<input name="gloss" size="80" type="text" class="required" value="{{ gloss|default_if_none:'' }}"><br/>
+    <label>derivations:</label>
+    {% if usertype == 'editor' %}
+        <button class="add_deriv_button{{ lexid }}" n="deriv_value" type="button">+</button><br>
+        <span class="input_deriv_wrap{{ lexid }}"></span>
+    {% endif %}
 
-<label>morphology (mr):</label> <input name="morphology" size="80" type="text"><br/>
-<label>literal (lt):</label> <input name="literal" size="80" type="text"><br/>
+    <label>etymology (et):</label><input name="etymology" type="text" value="{{ etymology|default_if_none:'' }}"><br>
+    <label>cultural:</label><textarea name="cultural" cols="80" rows="2">{{ cultural|default_if_none:'' }}</textarea><br>
 
-<label>derivations:</label> <button class="add_deriv_button" n="deriv_value[]" type="button">+</button> <br>
+    <label>date added:</label> <input name="date" type="date" value="{{ date_added }}" class="short" readonly><br>
+    <label>last modified:</label> <input name="date" type="date" value="{{ date_modified }}" class="short" readonly><br>
 
-<span class="input_deriv_wrap">
+    <!-- SENSES -->
+    {% for sense in senses %}
+        <div class="senses">
+            <h4>Sense {{ forloop.counter }}: </h4><br>
 
-</span>
-<label>etymology (et):</label> <input name="etymology" size="80" type="text"><br/>
-<label>cultural:</label> <textarea name="cultural" cols="80" rows="2" type="text"></textarea><br/>
+            <label>definition (de):</label> <input name="definition[]" size="80" type="text" value="{{ sense.definition|default_if_none:'' }}"><br>
+            <label>usage (ue):</label> <input name="usage[]" size="80" type="text" value="{{ sense.usage|default_if_none:'' }}"><br>
+            <label>scientific (sc):</label> <input name="scientific[]" size="80" type="text" value="{{ sense.sc|default_if_none:'' }}"><br>
+            <label>synonym (sy):</label> <input name="synonym[]" size="80" type="text" value="{{ sense.sy|default_if_none:'' }}"><br>
+            <label>note (nt):</label> <input name="note[]" size="80" type="text" value="{{ sense.nt|default_if_none:'' }}"><br>
+            <label>sources (so):</label> <input name="sources[]" size="80" type="text" value="{{ sense.so|default_if_none:'' }}"><br>
+        </div>
+    {% endfor %}
 
-<!-- SENSES -->
-<span class="sense_wrap">
+    {% if usertype == 'editor' %}
+        <span class="sense_wrap{{ lexid }}">
+        </span>
+        <span class="senses"><button class="add_sense{{ lexid }}" type="button">Add Sense</button></span>
 
-</span>
-<span class="senses"><button class="add_sense" type="button">Add Sense</button></span>
+        <br/>
 
-<input name="lex_item_key" value="NONE" type="text" readonly hidden><br>
+        <button type="submit">Save Changes</button>
+    {% endif %}
+    <input name="lexid" value="{{ lexid }}" type="text" readonly hidden><br>
 
-<br>
-<button type="button" id="submit_data">Save Changes</button>
-<span id="required_fields_error" class="error">
-Required fields (marked with <span style="color:red">*</span>) must be filled.
-</span>
+</form>
 
-<span id="duplicate_error" class="error">
-    This entry has existing match(es) in the lexicon (same lx and ps).
-    <button type="button" id="duplicate_save" class="save"> Save Anyway </button> or
-    <button type="button" id="duplicate_cancel" class="cancel_save"> Cancel Save </button>
-</span>
+<script>
+    $(document).ready(slidingDiv('button_modify{{ lexid }}'));
+    $(document).ready(multipleFields('{{ lexid }}'));
+    $(document).ready(multipleDerivations('{{ lexid }}'));
+    $(document).ready(multipleSenses('{{ lexid }}'));
+    $(document).ready(dataChanged('{{ lexid }}'));
+    $(document).ready(submitEntry('{{ lexid }}'));
+</script>

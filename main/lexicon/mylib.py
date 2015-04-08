@@ -1,17 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import difflib
-import xml.etree.ElementTree as etree
-from datetime import datetime
-
-
-class SearchOut():
-    num = 0
-    lex = ''
-    gloss = ''
-    pos = ''
-    base_form = ''
-    key = ''
 
 
 def scorer(word, criteria):
@@ -21,6 +10,8 @@ def scorer(word, criteria):
     def internal(crit):
         internal_score = 0.0
         crit = crit.lower()
+        if word == crit:
+            internal_score += 2
         if word.startswith(crit):
             internal_score += 0.8
         elif crit.startswith(word):
@@ -79,18 +70,10 @@ def fuzzy_search(lexicon, lex, gloss, pos, base_form, show_count):
             threshold += 0.8
             score += scorer(base_form, item_base_form)
         if score > threshold:
-            temp = SearchOut()
-            temp.num = number
-            temp.lex = item_lex
-            temp.gloss = item_gloss
-            temp.pos = item_pos
-            temp.base_form = item_base_form
-            temp.lexid = k
-            templist.append((score, temp))
+            lexicon[k]['lexid'] = k
+            templist.append((score, lexicon[k]))
             number += 1
     templist.sort(key=lambda x: x[0], reverse=True)
-    for item in templist:
-        outlist.append(item[1])
+    for lexical_item in templist:
+        outlist.append(lexical_item[1])
     return outlist[:show_count]
-
-

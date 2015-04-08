@@ -4,8 +4,8 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 #ROOT_PATH = os.path.dirname('/data/arapaho/')
-ROOT_PATH = os.path.dirname('__file__')
-
+#ROOT_PATH = os.path.dirname('__file__')
+ROOT_PATH = os.path.dirname('/Users/jena/Documents/Research/workspace3/arapaho/')
 
 ADMINS = (
     ('Jena Hwang', 'hwangd@colorado.edu')

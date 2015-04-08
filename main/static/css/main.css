@@ -6,16 +6,16 @@ body {
 }
 
 h1 {
-	font-size: 130%;
+	font-size: 180%;
 	font-weight:bold;
-	margin:0px 0px 20px 0px;
-
+	margin:0;
 }
 
 h2 {
-	font-size: 120%;
+	font-size: 150%;
 	font-weight:bold;
-	margin:5px 0px 10px 0;
+	margin:0px;
+	margin-bottom:5px;
 }
 
 h3 {
@@ -76,6 +76,8 @@ button:focus{
    border-color: brown;
 }
 
+/*=====*/
+
 
 #lex_search input{
     width:200px;
@@ -99,6 +101,7 @@ button:focus{
 
 /*=== Search Results ===*/
 
+
 #results_header span {
     color:white;
     display:inline-block;
@@ -109,13 +112,9 @@ button:focus{
     background-color: darkblue;
 }
 
-#results_header .search_pos {
-    width:100px;
+#search_results {
+    width:1000px;
 }
-#results_header .search_gloss {
-    width:300px;
-}
-
 
 #search_results > span {
     display:inline-block;
@@ -125,12 +124,14 @@ button:focus{
     border: 1px solid #CCCCCC;
 }
 
+#search_results .search_gloss {
+    width:400px;
+}
+
 #search_results .search_pos {
     width:100px;
 }
-#search_results .search_gloss {
-    width:300px;
-}
+
 
 #search_results label {
     width: 130px;
@@ -150,12 +151,16 @@ button:focus{
     width:200px;
 }
 
+#search_results input.long {
+    width:300px;
+}
+
 
 #search_results .senses{
-   margin-left: 75px;
-   margin-top: 5px;
+   margin: 5px 0px 5px 75px;
    padding: 3px;
    border: 1px solid gray;
+   width:650px;
 }
 
 #search_results .senses h4{
@@ -167,8 +172,12 @@ button:focus{
 	display:inline-block;
 }
 
+#search_results .sense_wrap{
+    margin-bottom:25px;
+}
+
 #search_results .derivations{
-   margin-left: 134px;
+    margin-left: 134px;
 }
 
 #add_new_entry > span {
@@ -214,4 +223,11 @@ button:focus{
     color:red;
 }
 
+.modify{
+    display:none;
+    width:90%;
+}
 
+label.required {
+    color:red;
+}
