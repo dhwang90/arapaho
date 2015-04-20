@@ -9,10 +9,27 @@
 <body>
     <h1>Arapaho Lexical Dictionary</h1>
     <br>
-    View Dictionary
-    <br>
-    <a href="/search">Edit Dictionary</a>
-    <br>
-    <a href="/utilities">Utilities</a>
+
+    <div id="index_main">
+        <strong>User:</strong> {{ username }} <br>
+        <strong>User Permission:</strong> {{ user_permission }} <br>
+
+        <br>
+        <a href="/search">Edit Dictionary</a>
+
+        <br>
+        {% if user_permission == 'admin' %}
+        <a href="/adjudicate">Adjudicate Sessions</a>
+        {% endif %}
+
+        <br>
+        <br>
+        <a href="/utilities">Utilities</a>
+        <br>
+        <br>
+        <a href="/end_session">End Session</a>
+        <br>
+        <a href="/cleartemp">Clear Temp</a>
+    </div>
 </body>
 </html>

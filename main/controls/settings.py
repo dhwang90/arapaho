@@ -7,6 +7,12 @@ TEMPLATE_DEBUG = DEBUG
 #ROOT_PATH = os.path.dirname('__file__')
 ROOT_PATH = os.path.dirname('/Users/jena/Documents/Research/workspace3/arapaho/')
 
+LEXICON_DATA = os.path.join(ROOT_PATH,'lexicon_data/')
+LEXICON_DATA_SESSIONS = os.path.join(LEXICON_DATA, 'unadjudicated_sessions/')
+LEXICON_DATA_SESSIONS_TEMP = os.path.join(LEXICON_DATA, 'temp_sessions/')
+
+GROUP_PERMISSION_FILE_PATH = os.path.join(ROOT_PATH,'main/controls/groups.txt')
+
 ADMINS = (
     ('Jena Hwang', 'hwangd@colorado.edu')
 )
@@ -113,15 +119,15 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'hellouser',  # test project
+    #'hellouser',  # test project
     'lexicon',
 
     #'django.contrib.auth',
     #'django.contrib.contenttypes',
-    #'django.contrib.sessions',
     #'django.contrib.sites',
     #'django.contrib.messages',
 
+    'django.contrib.sessions',
     'django.contrib.staticfiles',
 )
 
@@ -154,4 +160,6 @@ LOGGING = {
     }
 }
 
-LEXICON_DATA_FILE_ROOT = os.path.join(ROOT_PATH,"lexicon_data/")
+# Session Engine set to file-backend
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+SESSION_FILE_PATH = os.path.join(ROOT_PATH, 'main/controls/tmp/')

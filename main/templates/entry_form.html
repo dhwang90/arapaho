@@ -10,9 +10,8 @@
 
 <form action="entry" method="post" id="modify{{ lexid }}" class="modify" style="padding:10px 5px 0px 20px;">
     {% csrf_token %}
-    <span class="required">(required fields)</span><br><br>
+    <span class="required" style="color:red">(required fields)</span><br><br>
     <label class="required">lexeme (lx):</label><input name="lex" type="text" class="short required" value="{{ lex|default_if_none:'' }}" id="lex">
-    <label >lexeme (lx):</label>
 
     {% if language == "English" %}
         <input type="radio" name="language" value="Arapaho">Arapaho
@@ -23,6 +22,7 @@
     {% endif %}
 
     <label>underlying (mn):</label><input name="base_form" type="text" class="short" value="{{ base_form|default_if_none:'' }}"><br>
+    <label>morphology (mr):</label><input name="morphology" type="text" value="{{ morphology|default_if_none:'' }}"><br>
 
     <label>allolexeme (all):</label>
     <span class="input_fields_wrap{{ lexid }}">
@@ -41,32 +41,57 @@
 
     <label class="required">pos (ps):</label><input name="pos" type="text" class="short" required id="pos" value="{{ pos|default_if_none:'' }}"><br>
     <label class="required">gloss (ge):</label><input name="gloss" type="text" class="long" required value="{{ gloss|default_if_none:'' }}"><br>
-    <label>morphology (mr):</label><input name="morphology" type="text" value="{{ morphology|default_if_none:'' }}"><br>
+    <label>sem. domain (sd):</label><input name="semantic_domain" type="text" value="{{ semantic_domain|default_if_none:'' }}"><br>
     <label>literal (lt):</label><input name="literal" type="text" value="{{ literal|default_if_none:'' }}"><br>
 
     <label>derivations:</label>
     {% if usertype == 'editor' %}
         <button class="add_deriv_button{{ lexid }}" n="deriv_value" type="button">+</button><br>
+    {% endif %}
+
+    {% for dkey,dvalue in derivations.items %}
+        <div class="derivations">
+            <select name="deriv_type" class="deriv_type_{{ forloop.counter }}">
+                <option value="0">--Select--</option>
+                <option value="pl" class="noun">pl</option>
+                <option value="obv" class="na">obv sg</option>
+                <option value="obv.pl" class="na">obv pl</option>
+                <option value="poss3" class="noun">3 poss</option>
+                <option value="loc" class="noun">loc</option>
+                <option value="voc" class="na">voc</option>
+                <option value="s3" class="verb">3 s</option>
+            </select>
+            <input name="deriv_value" size="20" type="text" class="short" value="{{ dvalue }}">
+        <script>
+            $( document ).ready(function() {
+                $(".deriv_type_{{ forloop.counter }}").val("{{ dkey }}");
+            });
+        </script>
+        </div>
+    {% endfor %}
+
+    {% if usertype == 'editor' %}
         <span class="input_deriv_wrap{{ lexid }}"></span>
     {% endif %}
 
     <label>etymology (et):</label><input name="etymology" type="text" value="{{ etymology|default_if_none:'' }}"><br>
     <label>cultural:</label><textarea name="cultural" cols="80" rows="2">{{ cultural|default_if_none:'' }}</textarea><br>
 
-    <label>date added:</label> <input name="date" type="date" value="{{ date_added }}" class="short" readonly><br>
-    <label>last modified:</label> <input name="date" type="date" value="{{ date_modified }}" class="short" readonly><br>
+    <label>date added:</label> {{ date_added }} <br>
+    <label>last modified:</label> {{ date_modified }}<br>
 
     <!-- SENSES -->
     {% for sense in senses %}
         <div class="senses">
             <h4>Sense {{ forloop.counter }}: </h4><br>
 
-            <label>definition (de):</label> <input name="definition[]" size="80" type="text" value="{{ sense.definition|default_if_none:'' }}"><br>
-            <label>usage (ue):</label> <input name="usage[]" size="80" type="text" value="{{ sense.usage|default_if_none:'' }}"><br>
-            <label>scientific (sc):</label> <input name="scientific[]" size="80" type="text" value="{{ sense.sc|default_if_none:'' }}"><br>
-            <label>synonym (sy):</label> <input name="synonym[]" size="80" type="text" value="{{ sense.sy|default_if_none:'' }}"><br>
-            <label>note (nt):</label> <input name="note[]" size="80" type="text" value="{{ sense.nt|default_if_none:'' }}"><br>
-            <label>sources (so):</label> <input name="sources[]" size="80" type="text" value="{{ sense.so|default_if_none:'' }}"><br>
+            <label class="required">definition (de):</label> <input name="definition" size="80" type="text" value="{{ sense.definition|default_if_none:'' }}" required><br>
+            <label>usage (ue):</label> <input name="usage" size="80" type="text" value="{{ sense.usage|default_if_none:'' }}"><br>
+            <label>scientific (sc):</label> <input name="scientific" size="80" type="text" value="{{ sense.sc|default_if_none:'' }}"><br>
+            <label>synonym (sy):</label> <input name="synonym" size="80" type="text" value="{{ sense.sy|default_if_none:'' }}"><br>
+            <label>sources (so):</label> <input name="sources" size="80" type="text" value="{{ sense.so|default_if_none:'' }}"><br>
+            <label>note (nt):</label> <textarea name="note" cols="60" rows="2">{{ sense.nt|default_if_none:'' }}</textarea><br>
+
         </div>
     {% endfor %}
 
@@ -76,11 +101,12 @@
         <span class="senses"><button class="add_sense{{ lexid }}" type="button">Add Sense</button></span>
 
         <br/>
-
+        <br/>
         <button type="submit">Save Changes</button>
+        <br />
     {% endif %}
-    <input name="lexid" value="{{ lexid }}" type="text" readonly hidden><br>
 
+    <input name="lexid" value="{{ lexid }}" type="text" readonly hidden><br>
 </form>
 
 <script>
@@ -89,5 +115,4 @@
     $(document).ready(multipleDerivations('{{ lexid }}'));
     $(document).ready(multipleSenses('{{ lexid }}'));
     $(document).ready(dataChanged('{{ lexid }}'));
-    $(document).ready(submitEntry('{{ lexid }}'));
 </script>

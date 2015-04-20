@@ -76,7 +76,25 @@ button:focus{
    border-color: brown;
 }
 
-/*=====*/
+/*=== Search Results ===*/
+
+#index_main {
+    margin-left:50px;
+    border: 1px solid #dddddd;
+    width: 200px;
+    padding:10px;
+}
+
+
+#main_div {
+    margin-left:30px;
+    margin-top:10px;
+    border: 1px solid #dddddd;
+    width: 2000px;
+    padding:10px;
+}
+
+/*=== LEX SEARCH ===*/
 
 
 #lex_search input{
@@ -195,6 +213,9 @@ button:focus{
     background-color:#dddddd;
 }
 
+
+
+
 /*---- General CLASSES ----*/
 
 .button1 {
@@ -226,6 +247,7 @@ button:focus{
 .modify{
     display:none;
     width:90%;
+    background-color:#dddddd;
 }
 
 label.required {

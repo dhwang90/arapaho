@@ -29,6 +29,15 @@ def read_xml(filename):
 
         if lexitem.get('date') != '':
             lexical_item['date_added'] = str(datetime.strptime(lexitem.get('date'), '%d/%b/%Y'))
+            lexical_item['date_modified'] = str(datetime.strptime(lexitem.get('date'), '%d/%b/%Y'))
+        else:
+            if lexitem.get('source') == "03/Nov/2014":
+                lexical_item['date_added'] = str(datetime.strptime(lexitem.get('source'), '%d/%b/%Y'))
+                lexical_item['date_modified'] = str(datetime.strptime(lexitem.get('source'), '%d/%b/%Y'))
+            else:
+                lexical_item['date_added'] = str(datetime.strptime('07/Oct/2014', '%d/%b/%Y'))
+                lexical_item['date_modified'] = str(datetime.strptime('07/Oct/2014', '%d/%b/%Y'))
+
 
         lexical_item['verified'] = True
 
@@ -81,7 +90,7 @@ def read_xml(filename):
 
 def edit_tags(lexicon):
 
-    tags_to_move = ['obv.sg','obv.pl','pl','obv', 'loc', 'voc', 's3', 'poss3']
+    tags_to_move = ['obv','obv.sg','obv.pl','pl','obv', 'loc', 'voc', 's3', 'poss3']
     #tags_to_add = ['semantic_domain'] #sd ... json will rip it out anyway... but this needs to go into guidelines
 
     for lid, lex_item in lexicon.items():
@@ -89,13 +98,22 @@ def edit_tags(lexicon):
         derivs = {}
         for sense in lex_item['senses']:
             for stag, sdata in sense.items():
+                #print(lid, stag,sdata)
                 if stag not in tags_to_move or sdata == '': continue
 
-                if stag not in derivs:
-                    derivs[stag] = []
-                    derivs[stag].append(sdata)
+                if stag == 'obv.sg':
+                    stag_actual = 'obv'
+                else:
+                    stag_actual = stag
 
-                del sense[stag]
+                if stag_actual not in derivs:
+                    derivs[stag_actual] = sdata
+                else:
+                    print(lid,stag, sense)
+            for remove_tag in tags_to_move:
+                if remove_tag in sense:
+                    del sense[remove_tag]
+
 
         lex_item['derivations'] = derivs
 

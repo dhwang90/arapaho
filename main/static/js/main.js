@@ -36,10 +36,10 @@ function multipleDerivations(lexid){
         if(x < max_fields){ //max input box allowed
             x++; //text box increment
             var add_html = '<div class="derivations">\n'+
-                        '<select name="deriv_type" class="deriv_type">\n'+
+                        '<select name="deriv_type" class="deriv_type_new">\n'+
                             '<option value="0">--Select--</option>\n'+
                             '<option value="pl" class="noun">pl</option>\n'+
-                            '<option value="obv.sg" class="na">obv sg</option>\n'+
+                            '<option value="obv" class="na">obv sg</option>\n'+
                             '<option value="obv.pl" class="na">obv pl</option>\n'+
                             '<option value="poss3" class="noun">3 poss</option>\n'+
                             '<option value="loc" class="noun">loc</option>\n'+
@@ -72,12 +72,12 @@ function multipleSenses(lexid){
             sense_cnt++; //text box increment
             var add_html = '<div class="senses">\n'+
                        '<h4>New Sense: </h4> <a href="#" class="remove_sense">(remove)</a><br>'+
-                       '<label>definition<span style="color:red">*</span> (de):</label> <input name="definition[]" size="80" type="text" class="required"><br>'+
-                       '<label>usage (ue):</label> <input name="usage[]" size="80" type="text"><br>'+
-                       '<label>scientific (sc):</label> <input name="scientific[]" size="80" type="text"><br>'+
-                       '<label>synonym (sy):</label> <input name="synonym[]" size="80" type="text"><br>'+
-                       '<label>note (nt):</label> <input name="note[]" size="80" type="text"><br>'+
-                       '<label>sources (so):</label> <input name="sources[]" size="80" type="text"><br>'+
+                       '<label class="required">definition<span style="color:red">*</span> (de):</label> <input name="definition" size="80" type="text" class="required" required><br>'+
+                       '<label>usage (ue):</label> <input name="usage" size="80" type="text"><br>'+
+                       '<label>scientific (sc):</label> <input name="scientific" size="80" type="text"><br>'+
+                       '<label>synonym (sy):</label> <input name="synonym" size="80" type="text"><br>'+
+                       '<label>note (nt):</label> <input name="note" size="80" type="text"><br>'+
+                       '<label>sources (so):</label> <input name="sources" size="80" type="text"><br>'+
                        '</div>';
             $(sense_wrapper).append(add_html); //add input box
         }
@@ -201,10 +201,10 @@ function dataChanged(lexid){
 }
 
 function submitEntry(lexid){
+    // not needed
     $('#modify'+lexid).on('submit',function(e) {
         // prevent default submit
         e.preventDefault();
-        alert($(this).serialize());
         $.post(this.action,$(this).serialize());
     });
 }
