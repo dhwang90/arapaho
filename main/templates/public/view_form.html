@@ -1,0 +1,73 @@
+{% load url from future %}
+<span id='link_view{{ lexid }}' data-href="view{{ lexid }}">
+    <strong>{{ lex }}</strong>
+    <em>({{ pos }})</em>
+    "{{ gloss }}"
+    <span style="font-size:70%">({{ score }})</span>
+</span>
+
+<span id="view{{ lexid }}" class="view">
+    {%if base_form %}
+    <label>underlying form:</label>{{ base_form|default_if_none:'' }}<br>
+    {% endif %}
+
+    {%if morphology %}
+    <label>morphology:</label>{{ morphology|default_if_none:'' }}<br>
+    {% endif %}
+
+    {%if allolexemes|length > 0 and forloop.first %}
+    <label>allolexeme (all):</label>
+    {%if forloop.counter > 1 %}, {%endif%}{% for vf in allolexemes %}{{ vf }}{% endfor %}<br>
+    {% endif %}
+
+    {%if variant_forms|length > 0 and forloop.first  %}
+    <label>variant forms:</label>
+    {%if forloop.counter > 1 %}, {%endif%}{% for vf in variant_forms %}{{ vf }}{% endfor %}<br>
+    {% endif %}
+
+    {%if usage %}
+    <label>usage:</label>{{ usage_main|default_if_none:'' }}<br>
+    {% endif %}
+
+    {%if semantic_domain %}
+    <label>semantic domain:</label>{{ semantic_domain|default_if_none:'' }}<br>
+    {% endif %}
+
+    {%if literal %}
+    <label>literal:</label>{{ literal|default_if_none:'' }}<br>
+
+    {% endif %}
+
+    {%if derivations|length > 0 %}
+    <label>derivations:</label>
+    {% for dkey,dvalue in derivations.items %}
+        {%if forloop.counter > 1 %}, {%endif%}<em>{{ dkey }}</em> {{ dvalue }}
+    {% endfor %}<br>
+    {% endif %}
+
+    {%if etymology %}
+    <label>etymology:</label>{{ etymology|default_if_none:'' }}<br>
+    {% endif %}
+
+    {%if cultural %}
+    <label>cultural info:</label>{{ cultural|default_if_none:'' }}<br>
+    {% endif %}
+
+    <!-- SENSES -->
+    <span class="sense_wrap{{ lexid }}">
+        <strong>senses:</strong>
+    {% for sense in senses %}
+        <br>&nbsp; ({{ forloop.counter }})
+            "{{ sense.definition|default_if_none:'' }}"
+            {% if sense.usage %}; <strong>usage:</strong> {{ sense.usage }} {% endif %}
+            {% if sense.scientific %}; <strong>scientific:</strong> {{ sense.scientific }} {% endif %}
+            {% if sense.synonym %}; <strong>synonym:</strong> {{ sense.synonym }} {% endif %}
+            {% if sense.sources %}; <strong>sources:</strong> {{ sense.sources }} {% endif %}
+    {% endfor %}
+    </span>
+
+</span>
+
+<script>
+    $(document).ready(slidingDiv('link_view{{ lexid }}'));
+</script>

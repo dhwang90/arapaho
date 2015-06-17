@@ -1,0 +1,5 @@
+# group permissions
+group:admin:cowellj,hwangd,default_admin
+group:editor:alsa2732,irva7060,default_editor
+group:viewer:default_viewer
+

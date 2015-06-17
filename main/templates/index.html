@@ -7,29 +7,14 @@
     <link type="text/css" rel="stylesheet" href="{% static "main.css" %}">
 </head>
 <body>
-    <h1>Arapaho Lexical Dictionary</h1>
-    <br>
+{% load url from future %}
+    <div id="header">
+        <h1>Arapaho Lexical Dictionary</h1>
+        <br>
+    </div>
 
     <div id="index_main">
-        <strong>User:</strong> {{ username }} <br>
-        <strong>User Permission:</strong> {{ user_permission }} <br>
-
-        <br>
-        <a href="/search">Edit Dictionary</a>
-
-        <br>
-        {% if user_permission == 'admin' %}
-        <a href="/adjudicate">Adjudicate Sessions</a>
-        {% endif %}
-
-        <br>
-        <br>
-        <a href="/utilities">Utilities</a>
-        <br>
-        <br>
-        <a href="/end_session">End Session</a>
-        <br>
-        <a href="/cleartemp">Clear Temp</a>
+        <a href="{% url 'main_handler' %}">ENTER</a>
     </div>
 </body>
 </html>

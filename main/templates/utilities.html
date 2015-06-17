@@ -7,9 +7,11 @@
     <link type="text/css" rel="stylesheet" href="{% static "main.css" %}">
 </head>
 <body>
+{% load url from future %}
+<div id="header">
     <h1>Arapaho Lexical Dictionary</h1>
-    Go To: <a href="/">Main Page</a>
-
+    Go To: <a href="{% url 'main_handler' %}">Main Page</a>
+</div>
 <div id="main_div">
     <h2>Utilities</h2>
     <h3>Upload File</h3>

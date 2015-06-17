@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Arapaho Lexical Dictionary</title>
+    {% load staticfiles %}
+    <link type="text/css" rel="stylesheet" href="{% static "main.css" %}">
+</head>
+<body>
+{% load url from future %}
+    <div id="header">
+        <h1>Arapaho Lexical Dictionary</h1>
+        <br>
+    </div>
+
+    <div id="index_main">
+        <strong>User:</strong> {{ username }} <br>
+        <strong>User Permission:</strong> {{ user_permission }} <br>
+
+        <br>
+        <a href="{% url 'view_search' %}">View Dictionary</a>
+        <br>
+        <a href="{% url 'search' %}">Edit Dictionary</a>
+
+        <br>
+        {% if user_permission == 'admin' %}
+        <a href="{% url 'adjudicate' %}">Adjudicate Sessions</a>
+        <br>
+        <br>
+        <a href="{% url 'batch_modify' %}">Batch Modify</a>
+        {% endif %}
+
+
+
+
+        <br>
+        <br>
+        <a href="{% url 'renew_lexicon' %}">Renew Lexicon</a>
+        <br>
+        <a href="{% url 'reload_user' %}">Renew User</a>
+        <br>
+        <br>
+        <a href="{% url 'utilities' %}">Utilities</a>
+        <br>
+        <br>
+
+        <!--        <a href="{% url 'clear_temp' %}">Clear Temp</a> (Please do not use.) -->
+
+    </div>
+</body>
+</html>

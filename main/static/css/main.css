@@ -26,6 +26,8 @@ h3 {
 	margin:0;
 }
 
+
+
 p {
 	padding-left:10px;
 	padding-bottom:2px;
@@ -76,7 +78,7 @@ button:focus{
    border-color: brown;
 }
 
-/*=== Search Results ===*/
+/*=== MAIN DIVS ===*/
 
 #index_main {
     margin-left:50px;
@@ -87,15 +89,99 @@ button:focus{
 
 
 #main_div {
-    margin-left:30px;
+    overflow:auto;
+    margin-left:10px;
     margin-top:10px;
     border: 1px solid #dddddd;
-    width: 2000px;
+    width: 1200px;
     padding:10px;
 }
 
-/*=== LEX SEARCH ===*/
+#sessions_div {
+    float:left;
+    width: 155px;
+    margin-right:10px;
+    background-color:light-blue;
+    border: 1px solid #dddddd;
+    padding:5px;
+}
 
+#sessions_div h4 {
+	font-family:futura,arial narrow,arial;
+	font-size: 110%;
+	font-weight:bold;
+	color:black;
+	margin:0 0 2px 0;
+	padding: 1px;
+	border: 1px solid #cccccc;
+}
+
+#sessions_div .open_entry {
+    font-size:85%;
+    display:block;
+	padding: 1px;
+	margin:0 0 1px 0;
+}
+
+#sessions_div .update {
+    color: white;
+    background-color: #009900;
+}
+
+#sessions_div .del {
+    color: white;
+    background-color: #cc0000;
+}
+
+#sessions_div .new {
+    color: white;
+    background-color: #0000cc;
+}
+
+#sessions_div table td {
+    border: 0px;
+    font-size:70%;
+}
+
+#sessions_div table {
+    margin-top: 30px;
+    border: 1px solid #cccccc;
+    width:100%;
+}
+
+#sessions_div button {
+    width:100%;
+    margin-top: 20px;
+    line-height:2em;
+}
+
+
+#search_div {
+    float: left;
+}
+
+
+
+#updated_session_count {
+    display:inline-block;
+    border:1px solid blue;
+    padding:5px;
+    margin:10px;
+    width:500px;
+}
+
+#updated_session_count .button {
+    float: left;
+    width:100px;
+}
+
+#updated_session_count .float-message {
+    float: left;
+    width:350px;
+}
+
+
+/*=== LEX SEARCH ===*/
 
 #lex_search input{
     width:200px;
@@ -115,10 +201,76 @@ button:focus{
 	margin:0px;
 }
 
+/*=== Batch Results ===*/
 
+#batch_results table{
+    width:1000px;
+    table-layout: fixed;
+}
+
+#batch_results td {
+    font-size:95%;
+    text-align:left;
+}
+
+#batch_results td.lexid {
+    font-size:80%;
+    width:4%;
+}
+
+#batch_results td.lex {
+    width:12%;
+    word-wrap:break-word;
+}
+
+#batch_results td.pos {
+    width:10%;
+    word-wrap:break-word;
+    word-break: break-all;
+}
+
+#batch_results td.gloss {
+    width:auto;
+    word-wrap:break-word;
+}
+
+#batch_results td.underlying {
+    width:15%;
+    text-align:center;
+
+}
+
+#batch_results td.morpheme {
+    width:15%;
+    text-align:center;
+}
+
+#batch_results td.semantic {
+    width:15%;
+    text-align:center;
+}
+
+
+#batch_header span {
+    color:white;
+    display:inline-block;
+    background-color: darkblue;
+    padding:1px;
+    border: 1px solid darkblue;
+    margin-bottom:1px;
+}
+
+
+#batch_results .batch_mod {
+    margin-bottom:1px;
+    border: 1px solid black;
+}
+
+#batch_results input {
+    width: 150px;
+}
 
 /*=== Search Results ===*/
-
 
 #results_header span {
     color:white;
@@ -131,7 +283,7 @@ button:focus{
 }
 
 #search_results {
-    width:1000px;
+    width:1020px;
 }
 
 #search_results > span {
@@ -143,11 +295,13 @@ button:focus{
 }
 
 #search_results .search_gloss {
-    width:400px;
+    width:350px;
+	font-size: 90%;
 }
 
 #search_results .search_pos {
-    width:100px;
+    width:120px;
+	font-size: 90%;
 }
 
 
@@ -178,7 +332,7 @@ button:focus{
    margin: 5px 0px 5px 75px;
    padding: 3px;
    border: 1px solid gray;
-   width:650px;
+   width:700px;
 }
 
 #search_results .senses h4{
@@ -198,6 +352,24 @@ button:focus{
     margin-left: 134px;
 }
 
+
+#search_results ul {
+    margin-bottom:10px;
+}
+
+#search_results li {
+	font-size:100%;
+	padding:0px;
+	margin:0px;
+	list-style-type:none;
+}
+
+#search_results ul.sliding_hidden li {
+    margin:2px;
+    border-top:1px solid #cccccc;
+    border-bottom:1px solid #cccccc;
+}
+
 #add_new_entry > span {
     display:inline-block;
     width:160px;
@@ -214,6 +386,33 @@ button:focus{
 }
 
 
+/*=== Search Results: VIEW mode ===*/
+#search_results_view {
+    width:800px;
+}
+#search_results_view ul {
+    margin:0;
+    padding:0;
+}
+
+
+#search_results_view ul li {
+    display: list-item;
+    list-style-type: circle;
+    list-style-position: inside;
+}
+
+#search_results_view h3 {
+	font-family:futura,arial narrow,arial;
+	font-size: 110%;
+	font-weight:bold;
+	margin:0;
+}
+
+#search_results_view label {
+    font-weight:bold;
+    padding-right:5px;
+}
 
 
 /*---- General CLASSES ----*/
@@ -226,6 +425,7 @@ button:focus{
     border-color: green;
 }
 
+
 .error{
     display: none;
     margin-left: 10px;
@@ -237,19 +437,63 @@ button:focus{
 }
 
 
-.message{
-    font-family:"Courier New", Courier, monospace;
-    font-weight:bold;
-    display:inline-block;
-    color:red;
-}
-
 .modify{
     display:none;
     width:90%;
     background-color:#dddddd;
 }
 
+.view{
+    display:none;
+    width:90%;
+    background-color:#dddddd;
+    padding:5px;
+    padding-left:15px;
+}
+
+.sliding_hidden{
+    display:none;
+}
+
 label.required {
     color:red;
+}
+
+.blue {
+    color:blue;
+}
+
+.bold {
+    font-weight:bold;
+}
+
+.w10 {
+    display:inline-block;
+    width:10px;
+}
+
+.w50 {
+    display:inline-block;
+    width:50px;
+}
+
+.w80 {
+    display:inline-block;
+    width:80px;
+}
+
+.w100 {
+    display:inline-block;
+    width:100px;
+}
+
+.w150 {
+    display:inline-block;
+    width:150px;
+}
+
+.message{
+    font-weight:bold;
+    color:blue;
+    width:300px;
 }

@@ -18,7 +18,36 @@ function multipleFields(lexid){
     });
 
     $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-        e.preventDefault(); $(this).parent('span').remove(); x--;
+        e.preventDefault(); $(this).parent('span').remove();
+        $('form#modify'+lexid).find('input:submit, button:submit').attr('disabled', false);
+        x--;
+    });
+
+}
+
+function multipleAllolexemes(lexid){
+
+    var add_button      = $(".add_allo_button"+lexid); //Add button ID
+    var wrapper         = $(".input_allo_wrap"+lexid); //Fields wrapper
+    var max_fields      = 5; //maximum input boxes allowed
+
+
+    var x = 1; //initial text box count
+    $(add_button).click(function(e){ //on add input button click
+        e.preventDefault();
+        if(x < max_fields){ //max input box allowed
+            x++; //text box increment
+            var n = $(this).attr("n");
+            var add_html = '<span><label>&nbsp;</label> <input type="text" name="'+n+'" size="20" class="short"/>'+
+                       '<a href="#" class="remove_field_allo">(remove)</a><br/></span>\n';
+            $(wrapper).append(add_html); //add input box
+        }
+    });
+
+    $(wrapper).on("click",".remove_field_allo", function(e){ //user click on remove text
+        e.preventDefault(); $(this).parent('span').remove();
+        $('form#modify'+lexid).find('input:submit, button:submit').attr('disabled', false);
+        x--;
     });
 
 }
@@ -37,7 +66,7 @@ function multipleDerivations(lexid){
             x++; //text box increment
             var add_html = '<div class="derivations">\n'+
                         '<select name="deriv_type" class="deriv_type_new">\n'+
-                            '<option value="0">--Select--</option>\n'+
+                            '<option value="">--Select--</option>\n'+
                             '<option value="pl" class="noun">pl</option>\n'+
                             '<option value="obv" class="na">obv sg</option>\n'+
                             '<option value="obv.pl" class="na">obv pl</option>\n'+
@@ -47,15 +76,17 @@ function multipleDerivations(lexid){
                             '<option value="s3" class="verb">3 s</option>\n'+
                         '</select>\n'+
                         '<input name="deriv_value" size="20" type="text" class="short">\n'+
-                        '<a href="#" class="remove_field">(remove)</a>'+
+                        '<a href="#" class="remove_field_deriv">(remove)</a>'+
                         '</div>';
 
             $(wrapper).append(add_html); //add input box
         }
     });
 
-    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-        e.preventDefault(); $(this).parent('div').remove(); x--;
+    $(wrapper).on("click",".remove_field_deriv", function(e){ //user click on remove text
+        e.preventDefault(); $(this).parent('div').remove();
+        $('form#modify'+lexid).find('input:submit, button:submit').attr('disabled', false);
+        x--;
     });
 
 }
@@ -71,20 +102,25 @@ function multipleSenses(lexid){
         if(sense_cnt < max_senses){ //max input box allowed
             sense_cnt++; //text box increment
             var add_html = '<div class="senses">\n'+
-                       '<h4>New Sense: </h4> <a href="#" class="remove_sense">(remove)</a><br>'+
+                       '<h4>New Sense: </h4> <a href="#" class="remove_field_sense">(remove)</a><br>'+
                        '<label class="required">definition<span style="color:red">*</span> (de):</label> <input name="definition" size="80" type="text" class="required" required><br>'+
                        '<label>usage (ue):</label> <input name="usage" size="80" type="text"><br>'+
                        '<label>scientific (sc):</label> <input name="scientific" size="80" type="text"><br>'+
                        '<label>synonym (sy):</label> <input name="synonym" size="80" type="text"><br>'+
-                       '<label>note (nt):</label> <input name="note" size="80" type="text"><br>'+
                        '<label>sources (so):</label> <input name="sources" size="80" type="text"><br>'+
+                       '<label>note (nt):</label> <input name="note" size="80" type="text"><br>'+
+                       '<label>example:</label> <input name="example" size="80" type="text"><br>'+
+
                        '</div>';
             $(sense_wrapper).append(add_html); //add input box
         }
     });
 
-    $(sense_wrapper).on("click",".remove_sense", function(e){ //user click on remove text
-        e.preventDefault(); $(this).parent('div').remove(); sense_cnt--;
+    $(sense_wrapper).on("click",".remove_field_sense", function(e){ //user click on remove text
+        e.preventDefault();
+        $(this).parent('div').remove();
+        sense_cnt--;
+        $('form#modify'+lexid).find('input:submit, button:submit').attr('disabled', false);
     });
 }
 
@@ -198,6 +234,23 @@ function dataChanged(lexid){
         ;
      })
     .find('input:submit, button:submit').attr('disabled', true);
+}
+
+function warnUnsavedChanges(idname){
+    $('form#'+idname).on('change keyup keydown', 'input, textarea, select', function (e) {
+        $(this).addClass('changed-input');
+    });
+
+    // don't warn unsaved changes if trying to submit
+    $('form#'+idname).submit(function() {
+       $(window).unbind('beforeunload');
+    });
+
+    $(window).on('beforeunload', function () {
+        if ($('.changed-input').length) {
+            return 'You haven\'t saved your changes. Navigating away from this page will discard any changes.';
+        }
+    });
 }
 
 function submitEntry(lexid){

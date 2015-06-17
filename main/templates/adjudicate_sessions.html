@@ -1,0 +1,14 @@
+<li><span class="w10 blue">{{entry_id}}</span>
+<span class="w80">
+{% if "New" in entry.lexid %} New Entry
+{% else %}{{ entry.lexid }}
+{% endif %}
+</span>
+<span class="w100">{{ entry.lex }}</span>
+<span class="w100">{{ entry.base_form }}</span>
+<span class="w80">{{ entry.pos }}</span>
+<span class="w150">{{ entry.gloss }}</span>
+
+{{ form }}
+</li>
+

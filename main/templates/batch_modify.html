@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Arapaho Lexical Dictionary</title>
+    {% load staticfiles %}
+    <link type="text/css" rel="stylesheet" href="{% static "main.css" %}">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static "main.js" %}"></script>
+    <script type="text/javascript" src="{% static "sorttable.js" %}"></script>
+
+
+</head>
+<body>
+{% load url from future %}
+<div id="header">
+    <h1>Arapaho Lexical Dictionary</h1>
+    Go To: <a href="{% url 'main_handler' %}">Main Page</a>
+</div>
+<div id="main_div">
+    <div id="search_div">
+        <h2>Batch Modify</h2>
+
+        <h3>Pull entries that start with:</h3>
+        <div id="lex_search">
+            <form id="search" action="batch_modify" method="post" style="display:inline-block;">
+                {% csrf_token %}
+                <label>lex (lx):</label> <input name="lex" type="text" value="{{ lex|default_if_none:'' }}" autofocus="autofocus"><br>
+                <label>pos (ps):</label> <input name="pos" type="text" value="{{ pos|default_if_none:'' }}"><br>
+                <label>&nbsp;</label> <input type="checkbox" name="pos_seg" style="width:10px;" {% if pos_seg %}checked{% endif %}> Restrict search to POS with single segment (e.g. "na" and not "na.oblposs")
+                <br>
+                <br>
+                <input type="submit" value="Search" class="submit_search">
+            </form>
+            <button id="resetSearch" class="button1">Clear Fields</button>
+        </div>
+        <br>
+
+        <!-- IF THERE ARE ANY RESULTS TO DISPLAY -->
+        {% if outlist|length > 0 or lex != '' or pos != '' %}
+        <h2>Search Results</h2>
+        <h3>Retrieved {{outlist|length}} results</h3>
+
+        <form action="{% url 'batch_entry' %}" method="post" id="modify_batch">
+            {% csrf_token %}
+            <table id="batch_results" class="sortable">
+                <tr>
+                    <th>Lexid</th>
+                    <th>Lex</th>
+                    <th>POS</th>
+                    <th>Gloss</th>
+                    <th class="sorttable_nosort">Underlying</th>
+                    <th class="sorttable_nosort">Morpheme</th>
+                    <th class="sorttable_nosort">Semantic Domain</th>
+
+                </tr>
+
+                <!-- EXISTING ENTRIES -->
+
+                {% for lexitem in outlist %}
+                <tr>
+                    <td class='lexid'>{{ lexitem.lexid }}</td>
+                    <td class='lex'>{{ lexitem.lex }}</td>
+                    <td class='pos'>{{ lexitem.pos }}</td>
+                    <td class='gloss'>{{ lexitem.gloss }}</td>
+                    <td class='underlying'><input name="{{lexitem.lexid}}-base_form" value="{{ lexitem.base_form}}"/></td>
+                    <td class='morpheme'><input name="{{lexitem.lexid}}-morphology" value="{{ lexitem.morphology}}"/></td>
+                    <td class='semantic'><input name="{{lexitem.lexid}}-semantic_domain" value="{{ lexitem.semantic_domain}}"/></td>
+
+                </tr>
+                {% endfor %}
+            </table>
+            <br><button type="submit">Save Changes</button>
+        </form>
+
+        {% endif %}
+
+        <script>
+             $(document).ready(warnUnsavedChanges('modify_batch'));
+             $(document).ready(resetSearch());
+             $(document).ready(dataChanged('_batch'));
+        </script>
+
+    </div>
+</div>
+</body>
+</html>

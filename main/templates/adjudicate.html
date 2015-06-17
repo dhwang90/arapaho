@@ -5,15 +5,72 @@
     <title>Arapaho Lexical Dictionary</title>
     {% load staticfiles %}
     <link type="text/css" rel="stylesheet" href="{% static "main.css" %}">
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="{% static "main.js" %}"></script>
 
 </head>
 <body>
+{% load url from future %}
+<div id="header">
     <h1>Arapaho Lexical Dictionary</h1>
-    Go To: <a href="/">Main Page</a>
-
+    Go To: <a href="{% url 'main_handler' %}">Main Page</a>
+</div>
 <div id="main_div">
     <h2>Adjudicate Sessions</h2>
+
+    {% if uas_updated_current_count != '0' %}
+        <form id="updated_session_count" action="{% url 'commit_adjudication' editmode=editmode %}" method="post">
+            {% csrf_token %}
+            <div class="button"><button type="submit" {% if uas_updated_current_count == '0' %}disabled{% endif %}>Commit<br>Adjudications</button></div>
+            <div class="float-message">
+                There are {{ uas_updated_current_count }} adjudicated entries.<br>
+                Please remember to commit your adjudication!
+            </div>
+        </form>
+    {% endif %}
+
+    <div id="search_results">
+        {% if unadjudicated_sessions|length == 0 %}
+        <div class='message'>No sessions for adjudication were found.</div>
+        {% else %}
+            {% for user,u_sessions in unadjudicated_sessions.items %}
+            Sessions by: <span class="blue">{{ user }}</span> <br>
+            <ul>
+                {% for date,u_entries in u_sessions.items %}
+                <li>
+                <a id='session_{{user}}_{{date}}' data-href='session_content_{{user}}_{{date}}'>
+                {{ date }}  ({{ u_entries.forms|length }} entries)</a>
+                </li>
+                    <ul id='session_content_{{user}}_{{date}}' class="sliding_hidden" {% if 'prev_viewed' in u_entries %} style="display:block" {% endif %}>
+                    <li>
+                    <span class="w10 bold">#</span>
+                    <span class="w80 bold">Entry</span>
+                    <span class="w100 bold">Lex</span>
+                    <span class="w100 bold">Underlying</span>
+                    <span class="w80 bold">POS</span>
+                    <span class="w150 bold">Gloss</span>
+                    </li>
+
+                    {% for u_entry in u_entries.forms %}
+                    {{ u_entry }}
+                    {% endfor %}
+
+                    </ul>
+                    <script>
+                        $(document).ready(slidingDiv('session_{{user}}_{{date}}'));
+                    </script>
+
+                {% endfor %}
+            </ul>
+            {% endfor %}
+        {% endif %}
+
+
+        <form action="{% url 'load_adjudications' manual_reload='True' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Load more adjudications</button>
+        </form>
+
+    </div>
 </div></body>
 </html>

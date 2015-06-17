@@ -3,15 +3,45 @@ import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-#ROOT_PATH = os.path.dirname('/data/arapaho/')
-#ROOT_PATH = os.path.dirname('__file__')
-ROOT_PATH = os.path.dirname('/Users/jena/Documents/Research/workspace3/arapaho/')
+# Jena's local computer
+SETTINGS_LOCAL = True
 
-LEXICON_DATA = os.path.join(ROOT_PATH,'lexicon_data/')
+if SETTINGS_LOCAL:
+    ROOT_PATH = os.path.dirname('/Users/jena/Documents/Research/workspace3/arapaho/') # for local (jena) use
+else:
+    ROOT_PATH = os.path.dirname('/data/arapaho/')   # for server use
+    # ROOT_PATH = os.path.dirname('__file__')         # for local use (tempermental)
+
+# #### BEGIN CUSTOM SETTINGS
+
+# admin bypass temporary save and adjudication?
+ADMIN_BYPASS = True
+
+# where main arapaho_lexicon.json, temp, annotated data sit.
+LEXICON_DATA = os.path.join(ROOT_PATH, 'lexicon_data/')
+
+# where main arapaho_lexicon.json sits
+LEXICON_DATA_DICT = os.path.join(LEXICON_DATA, 'arapaho_lexicon.json')
+LEXICON_DATA_DICT_BACKUP = os.path.join(LEXICON_DATA, 'backup/arapaho_lexicon.json')
+
+# unadjudicated sessions (pulled from temp_sessions
 LEXICON_DATA_SESSIONS = os.path.join(LEXICON_DATA, 'unadjudicated_sessions/')
+
+# temp sessions - not yet saved for adjudication
 LEXICON_DATA_SESSIONS_TEMP = os.path.join(LEXICON_DATA, 'temp_sessions/')
 
-GROUP_PERMISSION_FILE_PATH = os.path.join(ROOT_PATH,'main/controls/groups.txt')
+# SYSTEM FILE includes:
+# - group permissions
+# - last lexical no
+SYSTEM_FILE_PATH = os.path.join(ROOT_PATH,'main/controls/system.txt')
+
+# date formatting.
+# for some reason JSON dump defaults to the '%Y-%m-%d %H:%M:%S' and it can't be changed easily.
+FORMAT_SESSIONS_DATE = '%Y-%m-%d-%H-%M-%S'
+FORMAT_JSON_SAVE_DATE = '%Y-%m-%d %H:%M:%S'
+
+##### END CUSTOM SETTINGS
+
 
 ADMINS = (
     ('Jena Hwang', 'hwangd@colorado.edu')
@@ -65,15 +95,16 @@ STATIC_ROOT = os.path.join(ROOT_PATH,"main/static/")
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = '/static/'
+STATIC_URL = '/arapaho/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(ROOT_PATH,"main/static/css/"),
-    os.path.join(ROOT_PATH,"main/static/js/"),
+    os.path.join(ROOT_PATH,"main/static/css"),
+    os.path.join(ROOT_PATH,"main/static/js"),
+    os.path.join(ROOT_PATH,"main/static/images"),
 
 )
 

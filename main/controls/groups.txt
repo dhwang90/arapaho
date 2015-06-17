@@ -1,3 +1,0 @@
-admin:cowellj,hwangd,default_admin
-editor:alsa2732,irva7060,default_editor
-viewer:default_viewer

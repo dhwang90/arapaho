@@ -1,33 +1,40 @@
 from django.conf.urls import patterns, include, url
-#from hellouser.views import helloworld, main_page, goodbye_page, next_page
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 import lexicon.views
 
 urlpatterns = patterns('',
-    # test urls
-    # url(r'^$',helloworld),
-    # url(r'^hellouser/$', main_page),
-    # url(r'^hellouser/name/$', main_page),
-    # url(r'^hellouser/color/$', next_page),
-    # url(r'^hellouser/color/goodbye/$', goodbye_page),
-
     # lexicon urls
-    url(r'index', lexicon.views.main_handler, name='Main Handler'),
-    url(r'^$', lexicon.views.main_handler, name='Main Handler'),
+    url(r'^index$', lexicon.views.index_handler, name='index_handler'),
+    url(r'^$', lexicon.views.index_handler, name='index_handler'),
 
 
-    url(r'utilities', lexicon.views.utilities, name='Utilities'),
-    url(r'search', lexicon.views.search, name='Search'),
-    url(r'entry', lexicon.views.modify_entry, name='Modify Entry'),
-    url(r'adjudicate', lexicon.views.adjudicate, name='Adjudicate Sessions'),
+    url(r'main$', lexicon.views.main_handler, name='main_handler'),
 
-    url(r'end_session', lexicon.views.end_session, name='End Session'),
-    url(r'cleartemp', lexicon.views.clear_temp, name='Clear Temp'),
+    url(r'^utilities$', lexicon.views.utilities, name='utilities'),
+
+    url(r'^search/search$', lexicon.views.search, name='search'),
+    url(r'^search$', lexicon.views.search, name='search'),
+
+    url(r'^batch_modify$', lexicon.views.batch_modify, name='batch_modify'),
+    url(r'^batch_entry$', lexicon.views.batch_entry, name='batch_entry'),
+
+    url(r'^entry/(?P<editmode>\w+)/$',lexicon.views.modify_entry, name='entry'),
+
+    url(r'^adjudicate/(?P<manual_reload>\w+)$',lexicon.views.adjudicate, name='load_adjudications'),
+    url(r'^adjudicate/(?P<prev_viewed_user>\w+)/(?P<prev_viewed_date>[a-zA-Z0-9_\-]+)/$', lexicon.views.adjudicate, name='adjudicate'),
+    url(r'^adjudicate$', lexicon.views.adjudicate, name='adjudicate'),
+
+    url(r'^end_session/(?P<editmode>\w+)/$', lexicon.views.end_session, name='commit_session'),
+    url(r'^end_session/(?P<editmode>\w+)/$', lexicon.views.end_session, name='commit_adjudication'),
 
 
-    # url(r'upload', views.upload_handler, name='Upload Handler'),
-    # url(r'dictionary', views.toolbox_serve_handler, name='Toolbox Serve Handler'),
-    # url(r'modifyform', views.modify_form_handler, name='Modify Form Handler'),
-    # url(r'newform', views.new_form_handler, name='New Form Handler'),
-    # url(r'modify_feedback', views.entry_feedback_handler, name='Entry Feedback Handler'),
-    # url(r'entry', views.entry_handler, name='Entry Handler'),
+    url(r'^renew_lexicon$', lexicon.views.renew_lexicon, name='renew_lexicon'),
+    url(r'^reload_user', lexicon.views.reload_user, name='reload_user'),
+
+    url(r'^cleartemp$', lexicon.views.clear_temp, name='clear_temp'),
+
+
+    url(r'^public/view_search$', lexicon.views.view_search, name='view_search'),
 )
+
+urlpatterns += staticfiles_urlpatterns()
