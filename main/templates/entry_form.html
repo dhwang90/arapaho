@@ -9,7 +9,9 @@
     {% endif %}
 </button>
 
-
+{% if editmode == 'adjudication' and status == 'deleted' %}
+    <span style="color:red">Marked for Deletion</span>
+{% endif %}
 
 <br>
 
@@ -28,6 +30,9 @@
 
     <label>underlying (mn):</label><input name="base_form" type="text" class="short" value="{{ base_form|default_if_none:'' }}"><br>
     <label>morphology (mr):</label><input name="morphology" type="text" value="{{ morphology|default_if_none:'' }}"><br>
+
+    <br>
+
 
     <label>allolexeme (all):</label>
     <span class="input_allo_wrap{{ lexid }}">
@@ -65,6 +70,29 @@
         <br>
     </span>
 
+        <br>
+
+
+    <label>parent lexeme:</label><input name="parent_lex" type="text" class="short" value="{{ parent_lex|default_if_none:'' }}">
+
+    {% if parent_rel == "variant" %}
+        <input type="radio" name="parent_rel" value="allolexeme">Allolexeme or
+        <input type="radio" name="parent_rel" value="variant" checked>Variant Form
+        <input type="radio" name="parent_rel" value="" >None<br>
+    {% else %}
+        {% if parent_rel == "allolexeme" %}
+            <input type="radio" name="parent_rel" value="allolexeme" checked>Allolexeme
+            <input type="radio" name="parent_rel" value="variant">Variant Form
+            <input type="radio" name="parent_rel" value="" >None<br>
+        {% else %}
+            <input type="radio" name="parent_rel" value="allolexeme" >Allolexeme
+            <input type="radio" name="parent_rel" value="variant">Variant Form
+            <input type="radio" name="parent_rel" value="" checked>None<br>
+        {% endif %}
+    {% endif %}
+
+    <br>
+
     <label class="required">pos (ps):</label><input name="pos" type="text" class="short" required id="pos" value="{{ pos|default_if_none:'' }}"><br>
     <label>main usage (ue):</label><input name="usage_main" type="text" class="long" value="{{ usage_main|default_if_none:'' }}"><br>
     <label class="required">gloss (ge):</label><input name="gloss" type="text" class="long" required value="{{ gloss|default_if_none:'' }}"><br>
@@ -100,8 +128,10 @@
     {% endfor %}
     </span>
 
+    <br>
     <label>etymology (et):</label><input name="etymology" type="text" value="{{ etymology|default_if_none:'' }}"><br>
     <label>cultural:</label><textarea name="cultural" cols="80" rows="2">{{ cultural|default_if_none:'' }}</textarea><br>
+    <br>
 
     <label>date added:</label>{{ date_added }} <br>
     <label>last modified:</label>{{ date_modified }}<br>
@@ -138,6 +168,9 @@
         <br/>
         {% if editmode == 'edit' %}
             <button type="submit">Save Changes</button>
+            {% if lexid != 'New' %}
+            <button type="submit" name="remove_lexical_item" class="remove_lexical_item">Remove Entry</button>
+            {% endif %}
         {% else %}
             <button type="submit">Accept Changes</button>
             <button type="submit" name="discard_changes">Discard Changes</button>
@@ -157,6 +190,11 @@
         <input name="lexid" value="{{ lexid }}" type="text" readonly hidden><br>
         <input name="user" value = "{{ curr_user }}" type="text" readonly hidden>
     {% endif %}
+
+    {% if editmode == 'adjudication' and status == 'deleted' %}
+         <input name="status" value = "deleted" type="text" readonly hidden>
+    {% endif %}
+
 
     <input name="entry" value = "{{ entry }}" type="text" readonly hidden>
     <input name="entry_date" value = "{{ entry_date }}" type="text" readonly hidden>

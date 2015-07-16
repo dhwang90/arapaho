@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Arapaho Lexical Dictionary</title>
+    {% load staticfiles %}
+    <link type="text/css" rel="stylesheet" href="{% static "main.css" %}">
+</head>
+<body>
+{% load url from future %}
+    <div id="header">
+        <h1>(Temporary) Allolexeme Handling</h1>
+    Go To: <a href="{% url 'main_handler' %}">Main Page</a>
+
+        <br>
+    </div>
+
+    <div id="index_main">
+        <h3>Following are TEMPORARY STUBS ONLY</h3>
+        <br>
+        <a href="{% url 'temp_allolex_gloss' %}">Gloss Mismatch</a>
+        <br>
+        <a href="{% url 'temp_allolex_pos' %}">Pos Mismatch</a>
+        <br>
+        <a href="{% url 'temp_allolex_new' %}">New Parent</a>
+
+
+        <!--        <a href="{% url 'clear_temp' %}">Clear Temp</a> (Please do not use.) -->
+
+    </div>
+</body>
+</html>

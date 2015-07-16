@@ -33,8 +33,15 @@ urlpatterns = patterns('',
 
     url(r'^cleartemp$', lexicon.views.clear_temp, name='clear_temp'),
 
-
     url(r'^public/view_search$', lexicon.views.view_search, name='view_search'),
+
+
+    url(r'^temp/temp_allolex$', lexicon.views.temp_allolex, name='temp_allolex'),
+    url(r'^temp/temp_allolex_pos$', lexicon.views.temp_allolex_pos, name='temp_allolex_pos'),
+    url(r'^temp/temp_allolex_gloss$', lexicon.views.temp_allolex_gloss, name='temp_allolex_gloss'),
+    url(r'^temp/temp_allolex_new$', lexicon.views.temp_allolex_new, name='temp_allolex_new'),
+
+
 )
 
 urlpatterns += staticfiles_urlpatterns()

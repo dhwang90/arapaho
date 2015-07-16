@@ -250,6 +250,11 @@ button:focus{
     text-align:center;
 }
 
+#batch_results td.deleted {
+    width:5%;
+    text-align:center;
+}
+
 
 #batch_header span {
     color:white;

@@ -234,6 +234,10 @@ function dataChanged(lexid){
         ;
      })
     .find('input:submit, button:submit').attr('disabled', true);
+
+    // exception: remove lexical item button should always be active
+    $('form#modify'+lexid).find('button:submit.remove_lexical_item').attr('disabled', false);
+
 }
 
 function warnUnsavedChanges(idname){

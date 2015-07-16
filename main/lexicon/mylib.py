@@ -53,6 +53,9 @@ def fuzzy_search(lexicon, lex, gloss, pos, base_form, show_count):
     templist = []
     number = 0
     for k in lexicon:
+        if 'status' in lexicon[k] and lexicon[k]['status'] == 'deleted':
+            continue
+
         try:
             item_lex = lexicon[k]['lex']
         except KeyError:
@@ -100,6 +103,9 @@ def fuzzy_search_select(lexicon, search_string, search_field):
     number = 0
 
     for k in lexicon:
+        if 'status' in lexicon[k] and lexicon[k]['status'] == 'deleted':
+            continue
+
         try:
             item_lex = lexicon[k][search_field]
             if search_field == 'gloss':
@@ -142,7 +148,8 @@ def starts_with(lexicon, lex, pos, pos_seg):
     outlist = []
     templist = []
     for k in lexicon:
-        if pos_seg and len(lexicon[k]['pos'].split('.')) > 1:
+        if ('status' in lexicon[k] and lexicon[k]['status'] == 'deleted') or \
+            (pos_seg and len(lexicon[k]['pos'].split('.')) > 1):
             continue
 
         if (lex and pos and lexicon[k]['lex'].startswith(lex) and lexicon[k]['pos'].startswith(pos)) or \

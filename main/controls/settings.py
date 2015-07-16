@@ -15,7 +15,7 @@ else:
 # #### BEGIN CUSTOM SETTINGS
 
 # admin bypass temporary save and adjudication?
-ADMIN_BYPASS = True
+ADMIN_BYPASS = False
 
 # where main arapaho_lexicon.json, temp, annotated data sit.
 LEXICON_DATA = os.path.join(ROOT_PATH, 'lexicon_data/')

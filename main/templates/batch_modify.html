@@ -52,7 +52,7 @@
                     <th class="sorttable_nosort">Underlying</th>
                     <th class="sorttable_nosort">Morpheme</th>
                     <th class="sorttable_nosort">Semantic Domain</th>
-
+                    <th class="sorttable_nosort">Remove?</th>
                 </tr>
 
                 <!-- EXISTING ENTRIES -->
@@ -66,6 +66,9 @@
                     <td class='underlying'><input name="{{lexitem.lexid}}-base_form" value="{{ lexitem.base_form}}"/></td>
                     <td class='morpheme'><input name="{{lexitem.lexid}}-morphology" value="{{ lexitem.morphology}}"/></td>
                     <td class='semantic'><input name="{{lexitem.lexid}}-semantic_domain" value="{{ lexitem.semantic_domain}}"/></td>
+                    <td class='deleted'>
+                        <input type="checkbox" name="{{lexitem.lexid}}-status"
+                               value="deleted" style="width:10px;height:10px;"/></td>
 
                 </tr>
                 {% endfor %}

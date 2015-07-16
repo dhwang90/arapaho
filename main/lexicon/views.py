@@ -62,6 +62,7 @@ POS_GROUPS = {'vai':'verb',
 def index_handler(request):
     return render(request, 'index.html')
 
+
 def main_handler(request):
     if settings.SETTINGS_LOCAL:
         username = 'hwangd'
@@ -225,27 +226,42 @@ def modify_entry(request, editmode=None):
     # print('editmode', editmode)
     if request.method == 'POST':
         fields = {}
-        entry = None
         entry_key = None
-
-        if 'discard_changes' in request.POST:
-            discard = True
-        else:
-            discard = False
+        discard = False
+        delete = False
 
         # get as list and make a dict so that we can pass it to parse entry form
         for k in request.POST:
 
-            # but first ignore what's handled elsewhere
-            if k in ['entry_id', 'entry_date', 'discard_changes','entry']:
+            # #### Handle non data portion of the fields
+
+            # discard changes (just flags an entry to be ignored during adjudication)
+            if k == 'discard_changes':
+                discard = True
                 continue
-            # # entry for lexical entry... in retrospect perhaps it should have been labeled better ah well
-            # if k == 'entry' and request.POST.get("entry"):
-            #     entry = request.POST.get("entry")
-            #     continue
+
+            # remove lexical item should trigger the lexical item's status to be set to "deleted"
+            elif k == 'remove_lexical_item':
+                fields['status'] = 'deleted'
+                delete = True
+                continue
+
+            # entry_id, entry, entry_date
+            # entry for lexical entry... in retrospect perhaps it should have been labeled better ah well
+            # entry id != lexid. Lexid is the lexical item id, but lexical entry id is the id associated with the
+            # changes made by the user. For example a user may have, in the same session, decided to edit a single
+            # lexical item twice. Then you have two lexical entries relating to one lexical item.
+            # these fields are called during the "user" and entry key parsing just below this line
+
+            elif k in ['entry_id', 'entry_date', 'entry']:
+                continue
+
+            # #### GET entry key information
+
             if k == 'user' and request.POST.get("user"):
                 entry_key = [request.POST.get('user'), request.POST.get('entry_date'), request.POST.get('entry_id')]
 
+            # #### Now for parsing ---> REAL <--- data fields:
             items = request.POST.getlist(k)
             if len(items) > 1:
                 fields[k] = items[:]
@@ -289,7 +305,12 @@ def modify_entry(request, editmode=None):
 
             if 'open_session' not in request.session:
                 request.session['open_session'] = []
-            request.session['open_session'].append((fields['lexid'], fields['lex'], fields['pos']))
+
+            if delete:
+                request.session['open_session'].append(('Del-'+fields['lexid'], fields['lex'], fields['pos']))
+            else:
+                request.session['open_session'].append((fields['lexid'], fields['lex'], fields['pos']))
+
             request.session.modified = True
 
             return redirect('search')
@@ -322,7 +343,7 @@ def batch_modify(request):
 def batch_entry(request):
     # note that this parallels end_session()
 
-    batch_fields = ['morphology', 'base_form', 'semantic_domain']
+    batch_fields = ['morphology', 'base_form', 'semantic_domain','status']
     entries = {}
     for k in request.POST:
         if k == 'csrfmiddlewaretoken': continue
@@ -341,6 +362,7 @@ def batch_entry(request):
         has_changes = False
 
         for b in batch_fields:
+            if b not in val: continue
             if (val[b].strip() and b not in lexical_item) or \
                     (b in lexical_item and val[b].strip() != lexical_item[b].strip()):
                 lexical_item[b] = val[b]
@@ -532,6 +554,25 @@ def end_session(request, editmode):
 
         return render(request, 'confirmation.html', {'out_message': out_message})
 
+
+def temp_allolex(request):
+    #return render(request, 'confirmation.html', {'out_message': 'main'})
+    return render(request, 'temp/temp_allolex.html')
+
+
+def temp_allolex_pos(request):
+    return render(request, 'confirmation.html', {'out_message': 'pos'})
+    #return render(request, 'temp/temp_allolex_pos.html')
+
+
+def temp_allolex_gloss(request):
+    return render(request, 'confirmation.html', {'out_message': 'gloss'})
+    #return render(request, 'temp/temp_allolex_gloss.html')
+
+
+def temp_allolex_new(request):
+    return render(request, 'confirmation.html', {'out_message': 'new'})
+    #return render(request, 'temp/temp_allolex_new.html')
 
 # def logout(request):
 #     return HttpResponse(content, status=401)
