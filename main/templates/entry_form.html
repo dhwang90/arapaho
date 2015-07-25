@@ -106,8 +106,8 @@
 
     <span class="input_deriv_wrap{{ lexid }}">
     {% for dkey,dvalue in derivations.items %}
-           <div class="derivations">
-            <select name="deriv_type" class="deriv_type_{{ forloop.counter }}">
+            <div class="derivations">
+            <select name="deriv_type" class="deriv_type_{{ lexid }}_{{ forloop.counter }}">
                 <option value="">--Select--</option>
                 <option value="pl" class="noun">pl</option>
                 <option value="obv" class="na">obv sg</option>
@@ -117,12 +117,12 @@
                 <option value="voc" class="na">voc</option>
                 <option value="s3" class="verb">3 s</option>
             </select>
+            <script>
+                $( document ).ready(function() {
+                    $(".deriv_type_{{ lexid }}_{{ forloop.counter }}").val("{{ dkey }}");
+                });
+            </script>
             <input name="deriv_value" size="20" type="text" class="short" value="{{ dvalue }}">
-        <script>
-            $( document ).ready(function() {
-                $(".deriv_type_{{ forloop.counter }}").val("{{ dkey }}");
-            });
-        </script>
         <a href="#" class="remove_field_deriv">(remove)</a>
         </div>
     {% endfor %}

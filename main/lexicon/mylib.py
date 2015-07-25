@@ -183,7 +183,6 @@ def parse_entry_form(lexical_item, json_format, **kwargs):
             lexitem[k] = is_list(kwargs.get(k, None))
 
         elif k == 'deriv_type':
-            # print(k, v)
             deriv_type = is_list(kwargs.get(k, None))
 
             if len(deriv_type) > 0:
