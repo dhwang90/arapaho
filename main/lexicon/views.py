@@ -2,6 +2,7 @@ from collections import OrderedDict
 import os
 import json
 from datetime import datetime
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.template import RequestContext
@@ -574,7 +575,18 @@ def temp_allolex_new(request):
     return render(request, 'confirmation.html', {'out_message': 'new'})
     #return render(request, 'temp/temp_allolex_new.html')
 
-# def logout(request):
-#     return HttpResponse(content, status=401)
 
+def get_lex(request):
+    if request.is_ajax():
+        lex = request.GET.get('term', '')
+        outlist = starts_with(request.session['lexicon'], lex, '', False)
+        results = []
+        for item in outlist:
+            item_json = {'id': item['lexid'], 'value': item['lex'], 'label': item['lex']+' ('+item['pos']+'): "'+item['gloss']+'"'}
+            results.append(item_json)
+        data = json.dumps(results)
+        print(data)
+    else:
+        data = 'fail'
 
+    return HttpResponse(data, 'application/json')

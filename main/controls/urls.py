@@ -15,6 +15,8 @@ urlpatterns = patterns('',
     url(r'^search/search$', lexicon.views.search, name='search'),
     url(r'^search$', lexicon.views.search, name='search'),
 
+    url(r'^get_lex/', lexicon.views.get_lex, name='get_lex'),
+
     url(r'^batch_modify$', lexicon.views.batch_modify, name='batch_modify'),
     url(r'^batch_entry$', lexicon.views.batch_entry, name='batch_entry'),
 

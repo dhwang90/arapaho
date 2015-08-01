@@ -104,6 +104,8 @@ def match_by_gloss(lexicon,lexid,h_lexid):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('lexicon')
+    parser.add_argument('initial_letter')
+    parser.add_argument('out_path')
     args = parser.parse_args()
 
     with open(args.lexicon) as fin:
@@ -115,13 +117,30 @@ def main():
     for lexid, lexitem in lexicon.items():
         lex = lexitem['lex']
         #if lex.startswith("'"):
-        if lex.startswith("i") or lex.startswith("e") or lex.startswith("o") or lex.startswith("u"):
-            add_to_dict_of_dict(glottal_initial,lex,lexitem['pos'],lexid)
-        elif lex.startswith('h'):
+
+        if lex.startswith('h'):
             add_to_dict_of_dict(h_initial,lex,lexitem['pos'],lexid)
+        else:
+            if (args.initial_letter == 'glottal' and lex.startswith("'")) \
+                    or (args.initial_letter =='vowel' \
+                                and (lex.startswith("i") or lex.startswith("e") or lex.startswith("o") or lex.startswith("u"))):
 
-    matches_found = [0,0,0,0,0,0,0]
+                add_to_dict_of_dict(glottal_initial,lex,lexitem['pos'],lexid)
 
+    matches_found = [0,0,0,0,0,0,0,0]
+
+    updated_lex_entries = {}
+
+    manual_check = {}
+    manual_check_cnt = 0
+
+    multiple = {}
+
+    no_matches = {}
+    no_matches_cnt = 0
+    no_matches_map = []
+
+    no_matches_multiple = []
 
     # for each glottal initial lex
     for lex in glottal_initial:
@@ -136,60 +155,112 @@ def main():
                 for lexid in lexids:
                     potential = []
                     match_h_lexid = None
-                    match_confidence = -1
+                    match_confidence = -1 # 1 - accept; 2, 3, 4 - manual check; 5,7 - no matches; 6 - multiple matches
 
                     # multiple matches
                     if len(h_initial[h_lex]) > 1:
 
-                        if pos in h_initial[h_lex]:
-                            if len(h_initial[h_lex][pos]) == 1:
-                                h_lexid = h_initial[h_lex][pos][0]
-                                match_type, match_confidence = match_by_gloss(lexicon,lexid,h_lexid)
-                                matches_found[match_type] += 1
-                            else:
-                                # print('\n',lexid,'More than one potential match')
-                                # print(lexid, lex, pos, lexicon[lexid]['gloss'])
+                        # but one match that matches the right pos
+                        if pos in h_initial[h_lex] and len(h_initial[h_lex][pos]) == 1:
 
-                                matches_found[6]+=1 # multiple matches
-                                for h_lexid in  h_initial[h_lex][pos]:
-                                    potential.append(h_lexid)
-                                    # print(h_lexid,lexicon[h_lexid]['lex'],lexicon[h_lexid]['pos'],lexicon[h_lexid]['gloss'])
+                            h_lexid = h_initial[h_lex][pos][0]
+                            match_type, match_confidence = match_by_gloss(lexicon,lexid,h_lexid)
+
+                        # multiple matches
                         else:
                             # print('\n',lexid,'More than one potential match')
                             # print(lexid, lex, pos, lexicon[lexid]['gloss'])
 
-                            matches_found[6]+=1 # multiple matches
+                            match_confidence = 6 # multiple matches
+
                             for h_pos in h_initial[h_lex]:
                                 for h_lexid in  h_initial[h_lex][h_pos]:
                                     potential.append(h_lexid)
                                     # print(h_lexid,lexicon[h_lexid]['lex'],lexicon[h_lexid]['pos'],lexicon[h_lexid]['gloss'])
 
+                    # if exact matching pos is found
+                    elif pos in h_initial[h_lex]:
+                        h_lexid = h_initial[h_lex][pos][0]
+                        match_h_lexid = h_lexid
+
+                        match_type, match_confidence = match_by_gloss(lexicon,lexid,h_lexid)
+
+                    # no pos exact match is found: NOTE there's only 1 item in the dictionary
                     else:
-                        # if exact matching pos is found
-                        if pos in h_initial[h_lex]:
-                            f = False
+                        h_pos = list(h_initial[h_lex].keys())[0]
+                        match_h_lexid = h_initial[h_lex][h_pos][0]
+                        match_confidence = 4  # pos mismatches
 
-                            h_lexid = h_initial[h_lex][pos][0]
-                            match_h_lexid = h_lexid
+                    matches_found[match_confidence]+=1
 
-                            match_type, match_confidence = match_by_gloss(lexicon,lexid,h_lexid)
-                            matches_found[match_type]+=1
+                    if match_confidence <= 4:
+                        lexicon[lexid]['parent_lex'] = h_lex
+                        lexicon[lexid]['parent_lexid'] = match_h_lexid
+                        lexicon[lexid]['parent_rel'] = 'allolexeme'
 
-
-                        # no pos exact match is found: NOTE there's only 1 item in the dictionary
+                        if match_confidence == 1:
+                            updated_lex_entries[lexid] = lexicon[lexid]
                         else:
-                            h_pos = list(h_initial[h_lex].keys())[0]
-                            match_h_lexid = h_initial[h_lex][h_pos][0]
-                            match_confidence = 4
+                            #manual_check[lexid] = lexicon[lexid]
+                            lexicon[lexid]['lexid'] = lexid # according to adjudication format
+                            manual_check[manual_check_cnt] = lexicon[lexid]
+                            manual_check_cnt += 1
 
-                            matches_found[4]+=1 # pos mismatches
-
-
+                    elif match_confidence == 6:
+                        multiple[lexid] = []
+                        for p_h_lexid in potential:
+                            multiple[lexid].append(lexicon[p_h_lexid])
+                            #print("%s - %s"%(p_h_lexid,lexicon[p_h_lexid]['lex']))
+                    else:
+                        print('Match confidence error: (%s) %s - %s'%(match_confidence, lexid, lex))
 
             else:
                 matches_found[5]+=1  # no matches
 
+                if len(lexids) == 1:
+                    lexid = lexids[0]
+
+                    # lexicon[lexid]['parent_lex'] = h_lex
+                    # lexicon[lexid]['parent_lexid'] = 'New'
+                    # lexicon[lexid]['parent_rel'] = 'allolexeme'
+
+                    # suggested parent based off variant form/allolexeme
+                    # lexicon[lexid]['lex'] = h_lex
+                    # lexicon[lexid]['lexid'] = 'New'
+                    # lexicon[lexid]['allolexemes'] = lex
+                    # no_matches[no_matches_cnt] = lexicon[lexid]
+
+                    no_matches_map.append((lexid, lex, lexicon[lexid]['pos'], lexicon[lexid]['gloss'], h_lex))
+
+                    no_matches_cnt += 1
+                else:
+                    matches_found[7]+=1  # no matches
+
+                    no_matches_multiple.append((lexid,lex,','.join(lexids)))
+
+
 
     print (matches_found)
+
+    with open(args.out_path+'/updated.json','w') as fout:
+        json.dump(updated_lex_entries, fout)
+
+    with open(args.out_path+'/manual.json','w') as fout:
+        json.dump(manual_check, fout)
+
+    with open(args.out_path+'/multiple.json','w') as fout:
+        json.dump(multiple, fout)
+
+    # with open(args.out_path+'/suggested.json','w') as fout:
+    #     json.dump(no_matches, fout)
+
+    with open(args.out_path+'/suggested_map.json','w') as fout:
+        for line in no_matches_map:
+            fout.write(','.join(line)+'\n')
+
+    with open(args.out_path+'/no_matches_multiple.json','w') as fout:
+        for line in no_matches_multiple:
+            fout.write(','.join(line)+'\n')
+
 
 main()

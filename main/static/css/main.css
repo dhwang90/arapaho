@@ -280,7 +280,7 @@ button:focus{
 #results_header span {
     color:white;
     display:inline-block;
-    width:160px;
+    width:145px;
     padding:3px;
     margin:1px;
     border: 1px solid darkblue;
@@ -291,16 +291,24 @@ button:focus{
     width:1020px;
 }
 
+#add_new_entry > span {
+    display:inline-block;
+    width:145px;
+    padding:3px;
+	margin:1px;
+    border: 1px solid green;
+}
+
 #search_results > span {
     display:inline-block;
-    width:160px;
+    width:145px;
     padding:3px;
 	margin:1px;
     border: 1px solid #CCCCCC;
 }
 
 #search_results .search_gloss {
-    width:350px;
+    width:330px;
 	font-size: 90%;
 }
 
@@ -309,6 +317,10 @@ button:focus{
 	font-size: 90%;
 }
 
+#search_results .search_lid {
+    width:80px;
+    font-size: 85%;
+}
 
 #search_results label {
     width: 130px;
@@ -330,6 +342,13 @@ button:focus{
 
 #search_results input.long {
     width:300px;
+}
+
+#search_results input.read_only {
+    background-color:#dddddd;
+    margin:0;
+    border:0px none #000;
+    box-shadow:none;
 }
 
 
@@ -375,13 +394,6 @@ button:focus{
     border-bottom:1px solid #cccccc;
 }
 
-#add_new_entry > span {
-    display:inline-block;
-    width:160px;
-    padding:3px;
-	margin:1px;
-    border: 1px solid green;
-}
 
 #add_new_content {
     display:none;

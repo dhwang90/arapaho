@@ -5,7 +5,9 @@
     <title>Arapaho Lexical Dictionary</title>
     {% load staticfiles %}
     <link type="text/css" rel="stylesheet" href="{% static "main.css" %}">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script type="text/javascript" src="{% static "main.js" %}"></script>
 </head>
 <body>
@@ -81,6 +83,7 @@
         <h2>Search Results</h2>
         <div id="search_results">
             <div id="results_header">
+                <span class="search_lid">Lexical ID</span>
                 <span class="search_lex">Lexical Item</span>
                 <span class="search_base">Underlying Form</span>
                 <span class="search_pos">POS</span>
@@ -91,6 +94,7 @@
 
             {% if new_form != none %}
             <div id="add_new_entry">
+                <span class="search_lid">New</span>
                 <span class="search_lex">{{ new_form.lex }} &nbsp;</span>
                 <span class="search_base">{{ new_form.base_form }} &nbsp;</span>
                 <span class="search_pos">{{ new_form.pos }} &nbsp;</span>
@@ -104,6 +108,7 @@
             <!-- EXISTING ENTRIES -->
 
             {% for lexitem in outlist %}
+                <span class="search_lid">{{ lexitem.lexid }} &nbsp;</span>
                 <span class="search_lex">{{ lexitem.lex }} &nbsp;</span>
                 <span class="search_base">{{ lexitem.base_form }} &nbsp;</span>
                 <span class="search_pos">{{ lexitem.pos }} &nbsp;</span>
