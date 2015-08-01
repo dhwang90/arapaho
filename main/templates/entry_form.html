@@ -73,8 +73,7 @@
         <br>
 
 
-    <label>parent lexeme:</label><input name="parent_lex" type="text" class="short" value="{{ parent_lex|default_if_none:'' }}">
-
+    <label>parent lex:</label><input name="parent_lex" type="text" class="short" value="{{ parent_lex|default_if_none:'' }}" id="parent_lex_{{ lexid }}">
     {% if parent_rel == "variant" %}
         <input type="radio" name="parent_rel" value="allolexeme">Allolexeme or
         <input type="radio" name="parent_rel" value="variant" checked>Variant Form
@@ -91,6 +90,18 @@
         {% endif %}
     {% endif %}
 
+    <label>parent lexical ID:</label> <input name="parent_lexid" type="text" class="short" value="{{ parent_lexid|default_if_none:'' }}" id="parent_lexid_{{ lexid }}"> <br>
+    <script>
+        $( document ).ready(function() {
+          $("#parent_lex_{{ lexid }}").autocomplete({
+            source: "/get_lex/",
+            minLength: 3,
+            select: function(event, ui) {
+                $("#parent_lexid_{{ lexid }}").val(ui.item.id);  // ui.item.value contains the id of the selected label
+            }
+          });
+        });
+    </script>
     <br>
 
     <label class="required">pos (ps):</label><input name="pos" type="text" class="short" required id="pos" value="{{ pos|default_if_none:'' }}"><br>
