@@ -27,6 +27,9 @@ LEXICON_DATA_DICT_BACKUP = os.path.join(LEXICON_DATA, 'backup/arapaho_lexicon.js
 # unadjudicated sessions (pulled from temp_sessions
 LEXICON_DATA_SESSIONS = os.path.join(LEXICON_DATA, 'unadjudicated_sessions/')
 
+LEXICON_DATA_ADJUDICATION = os.path.join(LEXICON_DATA, 'adjudication/')
+LEXICON_DATA_ADJUDICATION_TEMP = os.path.join(LEXICON_DATA, 'adjudication/temp/')
+
 # temp sessions - not yet saved for adjudication
 LEXICON_DATA_SESSIONS_TEMP = os.path.join(LEXICON_DATA, 'temp_sessions/')
 

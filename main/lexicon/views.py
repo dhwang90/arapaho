@@ -10,7 +10,8 @@ from django.template.loader import render_to_string
 import shutil
 from lexicon.mylib import fuzzy_search, parse_entry_form, load_unadjudicated_sessions, make_session_name, \
     make_admin_session_name, unadjudicated_sessions_available, temp_sessions_to_json, save_to_lexicon, \
-    system_file_parse, renew_lexicon_stub, starts_with, fuzzy_search_select
+    system_file_parse, renew_lexicon_stub, starts_with, fuzzy_search_select, get_unadjudicated_sessions, \
+    open_unadjudicated_session, get_lexids
 
 
 
@@ -32,18 +33,20 @@ POS_GROUPS = {'vai':'verb',
 #               the contents of this file are output as a single unique file under unadjudicated_sessions/,
 #               at this point the session_file is cleared for a new one.
 #
-# open_session:
+# open_session: annotator sessions that haven't yet been committed
 #
-# uas: unadjudicated sessions
+# uas: unadjudicated sessions <DEPRECATED>
 #               when admin chooses to "adjudicate sessions", the files unadjudicated sessions/
 #               session_files are collected up as uas
 #               adjudicating an instance/lexical item in uas will
 #               - output the adjudicated instance/lexical item into the admin_session_temp
 #               - +1 on uas_updated
 #
-# uas_updated: this is a value of number of adjudicated instances/lexical items
+# uas_updated: <DEPRECATED>
+#         this is a value of number of adjudicated instances/lexical items
 #
-# admin_session_file: temp file where admin's adjudications are saved
+# admin_session_file: <DEPRECATED>
+#               temp file where admin's adjudications are saved
 #               when the admin chooses to "end session" (save adjudication),
 #               the contents of this file are collected up and reconciled to lexicon
 #
@@ -223,7 +226,7 @@ def view_search(request):
     return render(request, 'public/view_search.html', template_values)
 
 
-def modify_entry(request, editmode=None):
+def modify_entry_deprecated(request, editmode=None):  # DEPRECATED!!
     # print('editmode', editmode)
     if request.method == 'POST':
         fields = {}
@@ -324,6 +327,97 @@ def modify_entry(request, editmode=None):
     # return render(request, 'validate_entry.html')
 
 
+def modify_entry(request, editmode=None):
+    # print('editmode', editmode)
+    if request.method == 'POST':
+        fields = {}
+        entry_key = None
+        discard = False
+        delete = False
+
+        # get as list and make a dict so that we can pass it to parse entry form
+        for k in request.POST:
+
+            # #### Handle non data portion of the fields
+
+            # discard changes (just flags an entry to be ignored during adjudication)
+            if k == 'discard_changes':
+                discard = True
+                continue
+
+            # remove lexical item should trigger the lexical item's status to be set to "deleted"
+            elif k == 'remove_lexical_item':
+                fields['status'] = 'deleted'
+                delete = True
+                continue
+
+            # entry_id, entry, entry_date
+            # entry for lexical entry... in retrospect perhaps it should have been labeled better ah well
+            # entry id != lexid. Lexid is the lexical item id, but lexical entry id is the id associated with the
+            # changes made by the user. For example a user may have, in the same session, decided to edit a single
+            # lexical item twice. Then you have two lexical entries relating to one lexical item.
+            # these fields are called during the "user" and entry key parsing just below this line
+
+            elif k in ['entry_id', 'entry_date', 'entry']:
+                continue
+
+            # #### GET entry key information
+
+            if k == 'user' and request.POST.get("user"):
+                entry_key = [request.POST.get('user'), request.POST.get('entry_date'), request.POST.get('entry_id')]
+
+            # #### Now for parsing ---> REAL <--- data fields:
+            items = request.POST.getlist(k)
+            if len(items) > 1:
+                fields[k] = items[:]
+            else:
+                fields[k] = items[0]
+
+        # produce json format on the new addition or change
+        if fields['lexid'].startswith('New'):
+            lexical_item = {}
+        else:
+            lexical_item = request.session['lexicon'][fields['lexid']]
+
+        lex_item = parse_entry_form(lexical_item, json_format=True, **fields)
+
+        if editmode == 'adjudication':
+            session_filename = request.POST.get("session_filename")
+            if not discard:
+                temp_session_adjudication = os.path.join(settings.LEXICON_DATA_ADJUDICATION_TEMP, session_filename+'.json')
+            else:
+                temp_session_adjudication = os.path.join(settings.LEXICON_DATA_ADJUDICATION_TEMP, session_filename+'-discarded.json')
+
+            with open(temp_session_adjudication, 'a') as fout:
+                fout.write(lex_item+'\n')
+
+            return redirect('adjudicate_file', filename=session_filename, status='P')
+
+        elif editmode == 'edit':
+            # dump in session file (temp loc)
+            with open(request.session['session_file'], 'a') as fout:
+                fout.write(lex_item+'\n')
+
+            if 'open_session' not in request.session:
+                request.session['open_session'] = []
+
+            if delete:
+                request.session['open_session'].append(('Del-'+fields['lexid'], fields['lex'], fields['pos']))
+            else:
+                request.session['open_session'].append((fields['lexid'], fields['lex'], fields['pos']))
+
+            request.session.modified = True
+
+            return redirect('search')
+            #return HttpResponse('<h1>Item saved.</h1><a href="index.html">Main</a>')
+        else:
+            out_message="uh oh, you should not be seeing this.\nError: modify entry called on neither adjudication or edit modes."
+            return render(request, 'confirmation.html', {'out_message': out_message})
+
+
+    # return render(request, 'validate_entry.html')
+
+
 def batch_modify(request):
     if request.method == 'POST':
         lex = request.POST.get('lex')
@@ -385,7 +479,7 @@ def batch_entry(request):
     return render(request, 'confirmation.html', {'out_message': "Your changes have been saved to the lexicon"})
 
 
-def adjudicate(request, prev_viewed_user=None, prev_viewed_date=None, manual_reload="False"):
+def adjudicate_deprecated(request, prev_viewed_user=None, prev_viewed_date=None, manual_reload="False"): # DEPRECATED
     # prev viewed user = username of the previously viewed entry,
     # prev viewed date = date at which the previously viewed entry was submitted for adjudication
 
@@ -440,7 +534,12 @@ def adjudicate(request, prev_viewed_user=None, prev_viewed_date=None, manual_rel
 
                 for entry_date, u_session in u_sessions.items():
 
-                    session_entries = OrderedDict()
+                    if entry_date not in temp_ua_sessions[entry_user]:
+                        temp_ua_sessions[entry_user][entry_date] = {}
+
+                    if 'forms' not in temp_ua_sessions[entry_user][entry_date]:
+                        temp_ua_sessions[entry_user][entry_date]['forms'] = []
+
                     for entry_id, entry in sorted(u_session.items()):
                         pass_entry = entry.copy()
 
@@ -460,18 +559,13 @@ def adjudicate(request, prev_viewed_user=None, prev_viewed_date=None, manual_rel
                         pass_entry['lexid'] = entry['lexid'] + entry_date + '-' + entry_id
                         pass_entry['entry'] = entry
 
+                        # embedded entry_form.html form
                         entry_form = render_to_string('entry_form.html', pass_entry, context_instance=context_instance)
-                        session_entries[entry_id] = {"form": entry_form, "entry": entry, "entry_id": entry_id}
 
-                    if entry_date not in temp_ua_sessions[entry_user]:
-                        temp_ua_sessions[entry_user][entry_date] = {}
-
-                    if 'forms' not in temp_ua_sessions[entry_user][entry_date]:
-                        temp_ua_sessions[entry_user][entry_date]['forms'] = []
-
-                    for sid, session_entry in session_entries.items():
-                        # if prev_viewed_key and prev_viewed_key == entry_user+'_'+entry_date:
+                        # outer adjudication_session.html form
+                        session_entry = {"form": entry_form, "entry": entry, "entry_id": entry_id}
                         session_form = render_to_string('adjudicate_sessions.html', session_entry)
+
                         temp_ua_sessions[entry_user][entry_date]['forms'].append(session_form)
 
                     if prev_viewed_user and prev_viewed_user == entry_user and prev_viewed_date == entry_date:
@@ -484,7 +578,92 @@ def adjudicate(request, prev_viewed_user=None, prev_viewed_date=None, manual_rel
         return render(request, 'adjudicate.html', template_values)
 
 
-def end_session(request, editmode):
+def adjudicate_select(request):
+    adjudication_status = 0
+    if request.session['user_permissions'][request.session['username']][0] != "admin":
+        return render(request, 'confirmation.html', {'out_message': "Sorry, only an admin can access this page."})
+    else:
+        # status:
+        # N - not yet adjudicated sessions
+        # P - adjudication in progress (not yet committed to lexical dictionary)
+
+        available_sessions  = get_unadjudicated_sessions(request.session['username'])
+
+        template_values = {'username': request.session['username'], 'available_sessions': available_sessions,
+                           'editmode':'adjudication','adjudication_status':adjudication_status}
+
+        return render(request, 'adjudicate_select.html', template_values)
+
+
+def adjudicate_file(request, filename, status):
+    u_sessions = open_unadjudicated_session(filename, request.session['username'],status)
+
+    session_forms = []
+    adjudicated_entries = []
+    discarded_entries = []
+
+    if status == 'P':
+        temp_session_adjudication = os.path.join(settings.LEXICON_DATA_ADJUDICATION_TEMP, filename+'.json')
+        if os.path.isfile(temp_session_adjudication):
+            with open(temp_session_adjudication) as fin:
+                for line in fin:
+                    adjudicated_instances = json.loads(line)
+                    adjudicated_entries.append(adjudicated_instances['lexid'])
+
+        temp_session_adjudication = os.path.join(settings.LEXICON_DATA_ADJUDICATION_TEMP, filename+'-discarded.json')
+        if os.path.isfile(temp_session_adjudication):
+            with open(temp_session_adjudication) as fin:
+                for line in fin:
+                    adjudicated_instances = json.loads(line)
+                    discarded_entries.append(adjudicated_instances['lexid'])
+
+
+    for (entry_annotator, entry_date, u_session) in u_sessions:
+        for entry_id, entry in u_session.items():
+            pass_entry = entry.copy()
+
+            # entry identifier key
+            pass_entry['user'] = entry_annotator
+            pass_entry['entry_date'] = entry_date
+            pass_entry['entry_id'] = entry_id
+
+            # editmode modifications just for the entry_form.html
+            pass_entry['editmode'] = 'adjudication'
+
+            # lexid modifications strictly for unique entry numbering purposes
+            # see admin statements in entry_form.html
+            pass_entry['lexid_original'] = entry['lexid']
+
+            # there can be multiple of same lexids and so we need the entry_id for identification
+            pass_entry['lexid'] = entry['lexid'] + entry_date + '-' + entry_id
+            pass_entry['entry'] = entry
+
+            pass_entry['session_filename'] = filename
+
+            if entry['lexid'] in adjudicated_entries:
+                is_adjudicated = 'ADJUDICATED'
+                entry_form = ''
+            elif entry['lexid'] in discarded_entries:
+                is_adjudicated = 'DISCARDED'
+                entry_form = ''
+            else:
+                is_adjudicated = ''
+                # embedded entry_form.html form
+                entry_form = render_to_string('entry_form.html', pass_entry, context_instance=RequestContext(request))
+
+            # outer adjudication_session.html form
+            session_entry = {"form": entry_form, "entry": entry, "entry_id": entry_id, "adjudicated":is_adjudicated}
+            session_form = render_to_string('adjudicate_sessions.html', session_entry)
+
+            session_forms.append(session_form)
+
+    template_values = {'username': request.session['username'], 'session_name': filename,
+                       'session_entries':session_forms, 'editmode':'adjudication'}
+
+    return render(request, 'adjudicate_file.html', template_values)
+
+
+def end_session_deprecated(request, editmode): # DEPRECATED
     if 'session_file' not in request.session:
         if 'open_session' in request.session:
             del request.session['open_session']
@@ -500,7 +679,7 @@ def end_session(request, editmode):
 
         temp_session_filename = request.session[session_file_name]
 
-        if not os.path.exists(temp_session_filename):
+        if not os.path.isfile(temp_session_filename):
             if 'open_session' in request.session:
                 del request.session['open_session']
 
@@ -556,24 +735,124 @@ def end_session(request, editmode):
         return render(request, 'confirmation.html', {'out_message': out_message})
 
 
-def temp_allolex(request):
-    #return render(request, 'confirmation.html', {'out_message': 'main'})
-    return render(request, 'temp/temp_allolex.html')
+def end_session(request):
+    if 'session_file' not in request.session:
+        if 'open_session' in request.session:
+            del request.session['open_session']
+
+        out_message = "You do not currently have an open session"
+        return render(request, 'confirmation.html', {'out_message': out_message})
+    else:
+        # package up everything in file, create a json file
+        session_file_name = 'session_file'
+
+        temp_session_filename = request.session[session_file_name]
+
+        if not os.path.isfile(temp_session_filename):
+            if 'open_session' in request.session:
+                del request.session['open_session']
+
+            out_message = 'You do not have any new edits or updates to lexical entries.'
+            return render(request, 'confirmation.html', {'out_message': out_message})
+
+        temp_session_filename_base = os.path.basename(temp_session_filename)
+
+        json_out = temp_sessions_to_json(temp_session_filename)     #entries in json format
+        today_uniq = datetime.today().strftime(settings.FORMAT_SESSIONS_DATE)  # today's date (unique identifier)
+
+        if 'admin' in request.session['user_permissions'][request.session['username']] and settings.ADMIN_BYPASS:
+
+            request.session['lexicon'],request.session['last_used_lexid'] = renew_lexicon_stub()
+            save_to_lexicon(json_out, request.session['lexicon'], request.session['last_used_lexid'])
+            request.session.modified = True
+
+            # print(json_out, request.session['lexicon']['L14217'])
+
+            shutil.move(settings.LEXICON_DATA_DICT,
+                        settings.LEXICON_DATA_DICT_BACKUP.replace('.json', '-'+ today_uniq + '.json'))
+
+            with open(settings.LEXICON_DATA_DICT, 'w') as fout:
+                json.dump(request.session['lexicon'], fout, ensure_ascii=True)
 
 
-def temp_allolex_pos(request):
-    return render(request, 'confirmation.html', {'out_message': 'pos'})
-    #return render(request, 'temp/temp_allolex_pos.html')
+            del request.session['open_session']
+            out_message = 'Your entries have been saved to the lexicon.'
+
+        else:
+
+            # save to settings.LEXICON_DATA_SESSIONS under the same filename_base (use dump)
+            fname = temp_session_filename_base.split('-')[0] + '-' + today_uniq + '.json'
+            with open(os.path.join(settings.LEXICON_DATA_SESSIONS, fname), 'w') as fout:
+                fout.write(json.dumps(json_out, ensure_ascii=True, sort_keys=True))
+
+            del request.session['open_session']
+
+            out_message = 'Your entries have been saved for adjudication.'
+
+        # delete session_file
+        os.remove(temp_session_filename)
+        del request.session[session_file_name]
+
+        return render(request, 'confirmation.html', {'out_message': out_message})
 
 
-def temp_allolex_gloss(request):
-    return render(request, 'confirmation.html', {'out_message': 'gloss'})
-    #return render(request, 'temp/temp_allolex_gloss.html')
+def commit_adjudication(request, filename):
+    temp_session_adjudication = os.path.join(settings.LEXICON_DATA_ADJUDICATION_TEMP, filename+'.json')
+    temp_session_adjudication_discard = os.path.join(settings.LEXICON_DATA_ADJUDICATION_TEMP, filename+'-discarded.json')
+
+    session_adjudication = os.path.join(settings.LEXICON_DATA_ADJUDICATION+request.session['username'], filename+'.json')
+
+    if not os.path.isfile(temp_session_adjudication) and not os.path.isfile(temp_session_adjudication_discard):
+        out_message = 'You do not currently do not have adjudicated instances.'
+    else:
+        if os.path.isfile(temp_session_adjudication):
+            with open(session_adjudication) as fin:
+                session_adjudication_json = json.load(fin)
+
+            json_out = temp_sessions_to_json(temp_session_adjudication)     #entries in json format
+
+            if len(session_adjudication_json) > len(json_out):
+                adjudicated_entries = get_lexids(json_out)
+                for_discard = []
+
+                for entryid, entry in session_adjudication_json.items():
+                    if entry['lexid'] not in adjudicated_entries:
+                        for_discard.append(entry)
+
+                if len(for_discard) > 0:
+                    with open(temp_session_adjudication_discard,'a') as fout:
+                        for d in for_discard:
+                            fout.write(json.dumps(d)+'\n')
+
+            today_uniq = datetime.today().strftime(settings.FORMAT_SESSIONS_DATE)  # today's date (unique identifier)
+
+            request.session['lexicon'],request.session['last_used_lexid'] = renew_lexicon_stub()
+            save_to_lexicon(json_out, request.session['lexicon'], request.session['last_used_lexid'])
+            request.session.modified = True
+
+            shutil.move(settings.LEXICON_DATA_DICT,
+                        settings.LEXICON_DATA_DICT_BACKUP.replace('.json', '-'+ today_uniq + '.json'))
+
+            with open(settings.LEXICON_DATA_DICT, 'w') as fout:
+                json.dump(request.session['lexicon'], fout, ensure_ascii=True)
+
+            # move temp_session_files to adjudicator directory, and rename as committed
+            shutil.move(temp_session_adjudication, session_adjudication.replace(".json", "-committed.json"))
+
+        # save original adjudication and temp duscaed file for historical record
+        shutil.move(session_adjudication, session_adjudication.replace(".json", "-adjudicated.json"))
+
+        if os.path.isfile(temp_session_adjudication_discard):
+            shutil.move(temp_session_adjudication_discard, session_adjudication.replace(".json", "-discarded.json"))
 
 
-def temp_allolex_new(request):
-    return render(request, 'confirmation.html', {'out_message': 'new'})
-    #return render(request, 'temp/temp_allolex_new.html')
+        out_message = 'Your adjudications have been saved to the lexicon.'
+
+
+
+
+
+    return render(request, 'confirmation.html', {'out_message': out_message})
 
 
 def get_lex(request):

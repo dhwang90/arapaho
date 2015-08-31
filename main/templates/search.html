@@ -34,7 +34,7 @@
                 {{ os_lexid }}: {{ os_lex }} ({{ os_pos }})</span>
             {% endfor %}
 
-            <form id="commit_session" action="{% url 'commit_session' editmode=editmode %}" method="post">
+            <form id="commit_session" action="{% url 'commit_session' %}" method="post">
                 {% csrf_token %}
                 <button type="submit">Commit Changes</button>
             </form>

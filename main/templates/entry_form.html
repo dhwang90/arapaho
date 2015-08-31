@@ -191,6 +191,7 @@
 
     {% if editmode == 'adjudication' %}
         <input name="lexid" value="{{ lexid_original }}" type="text" readonly hidden><br>
+        <input name="session_filename" value = "{{ session_filename }}" type="text" readonly hidden>
 
         {% if user != '' %}
             <input name="user" value = "{{ user }}" type="text" readonly hidden>

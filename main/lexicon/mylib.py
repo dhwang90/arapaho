@@ -274,12 +274,78 @@ def load_unadjudicated_sessions():
     return u_sessions
 
 
+def get_unadjudicated_sessions(adjudicator):
+    # not yet adjudicated sessions
+    available_sessions = {}
+
+    for f in glob.glob(os.path.join(settings.LEXICON_DATA_SESSIONS, '*.json')):
+        if '-under-adjudication' in f:
+            continue
+
+        fname, annotator, date = parse_annotation_filename(f)
+
+        if annotator not in available_sessions:
+            available_sessions[annotator] = {}
+
+        available_sessions[annotator][date] = {}
+        available_sessions[annotator][date][fname] = 'N' # new
+
+    # adjudication in progress
+
+    for f in glob.glob(os.path.join(settings.LEXICON_DATA_ADJUDICATION+adjudicator+'/', '*.json')):
+        if '-committed' in f or '-adjudicated' in f or '-discarded' in f:
+            continue
+
+        fname, annotator, date = parse_annotation_filename(f)
+
+        if annotator not in available_sessions:
+            available_sessions[annotator] = {}
+
+        available_sessions[annotator][date] = {}
+        available_sessions[annotator][date][fname] = 'P'  #in progress
+
+    return available_sessions
+
+
+def open_unadjudicated_session(filename, username, status):
+    u_sessions = []
+
+    fname, annotator, date = parse_annotation_filename(filename)
+    adjudicator_dir = settings.LEXICON_DATA_ADJUDICATION+'/'+username+'/'
+    adjudication_filename = os.path.join(adjudicator_dir,filename+'.json')
+
+    if status == 'N':
+        # UNADJUDICATED FILE
+        unadjudicated_filename = os.path.join(settings.LEXICON_DATA_SESSIONS,filename+'.json')
+        with open(unadjudicated_filename) as fin:
+            u_sessions.append((annotator, date, json.load(fin)))
+
+        # ADJUDICATION FILE
+        if not os.path.exists(adjudicator_dir):
+            os.makedirs(adjudicator_dir)
+
+        # COPY UNADJUICATED TO ADJUDICATION; AND RENAME ORIGINAL
+        shutil.copy(unadjudicated_filename, adjudication_filename)
+        shutil.move(unadjudicated_filename, unadjudicated_filename.replace(".json", "-under-adjudication.json"))
+    else: # if P (in progress)
+        with open(adjudication_filename) as fin:
+            u_sessions.append((annotator, date, json.load(fin)))
+
+    return u_sessions
+
 def unadjudicated_sessions_available():
     for f in glob.glob(os.path.join(settings.LEXICON_DATA_SESSIONS, '*.json')):
         if '-under-adjudication' in f:
             continue
         return True
     return False
+
+
+def get_lexids(jsonfile):
+    lexids = []
+    for entryid,entry in jsonfile.items():
+        lexids.append(entry['lexid'])
+    return lexids
 
 
 def system_file_parse():
@@ -308,6 +374,7 @@ def save_to_lexicon(updates_json, lexicon, last_used_lexid):
     for _, update_lexitem in updates_json.items():
         lexid = update_lexitem['lexid']
         del update_lexitem['lexid']
+        del update_lexitem['session_filename'] #added in at adjudicate_file() for the purposes of template
 
         if lexid.startswith('New'):
             last_used_lexid += 1
@@ -376,3 +443,9 @@ def ordered(obj):
         return sorted(ordered(x) for x in obj)
     else:
         return obj
+
+
+def parse_annotation_filename(filename):
+    fbasename = os.path.basename(filename).split('.')[0]
+    fn = fbasename.split('-')
+    return fbasename, fn[0], '-'.join(fn[1:])

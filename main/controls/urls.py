@@ -22,13 +22,16 @@ urlpatterns = patterns('',
 
     url(r'^entry/(?P<editmode>\w+)/$',lexicon.views.modify_entry, name='entry'),
 
-    url(r'^adjudicate/(?P<manual_reload>\w+)$',lexicon.views.adjudicate, name='load_adjudications'),
-    url(r'^adjudicate/(?P<prev_viewed_user>\w+)/(?P<prev_viewed_date>[a-zA-Z0-9_\-]+)/$', lexicon.views.adjudicate, name='adjudicate'),
-    url(r'^adjudicate$', lexicon.views.adjudicate, name='adjudicate'),
+    #url(r'^adjudicate/(?P<manual_reload>\w+)$',lexicon.views.adjudicate, name='load_adjudications'),
+    #url(r'^adjudicate/(?P<prev_viewed_user>\w+)/(?P<prev_viewed_date>[a-zA-Z0-9_\-]+)/$', lexicon.views.adjudicate, name='adjudicate'),
+    #url(r'^adjudicate$', lexicon.views.adjudicate, name='adjudicate'),
 
-    url(r'^end_session/(?P<editmode>\w+)/$', lexicon.views.end_session, name='commit_session'),
-    url(r'^end_session/(?P<editmode>\w+)/$', lexicon.views.end_session, name='commit_adjudication'),
+    url(r'^adjudicate_select$', lexicon.views.adjudicate_select, name='adjudicate_select'),
+    url(r'^adjudicate_file/(?P<filename>[a-zA-Z0-9_\-]+)/(?P<status>[NP])/$', lexicon.views.adjudicate_file, name='adjudicate_file'),
+    url(r'^adjudicate_select$', lexicon.views.adjudicate_select, name='adjudicate_select'),
 
+    url(r'^end_session$', lexicon.views.end_session, name='commit_session'),
+    url(r'^commit_adjudication/(?P<filename>[a-zA-Z0-9_\-]+)/$', lexicon.views.commit_adjudication, name='commit_adjudication'),
 
     url(r'^renew_lexicon$', lexicon.views.renew_lexicon, name='renew_lexicon'),
     url(r'^reload_user', lexicon.views.reload_user, name='reload_user'),
@@ -37,11 +40,9 @@ urlpatterns = patterns('',
 
     url(r'^public/view_search$', lexicon.views.view_search, name='view_search'),
 
-
-    url(r'^temp/temp_allolex$', lexicon.views.temp_allolex, name='temp_allolex'),
-    url(r'^temp/temp_allolex_pos$', lexicon.views.temp_allolex_pos, name='temp_allolex_pos'),
-    url(r'^temp/temp_allolex_gloss$', lexicon.views.temp_allolex_gloss, name='temp_allolex_gloss'),
-    url(r'^temp/temp_allolex_new$', lexicon.views.temp_allolex_new, name='temp_allolex_new'),
+    #url(r'^temp/temp_allolex$', lexicon.views.temp_allolex, name='temp_allolex'),
+    #url(r'^temp/temp_allolex_manual$', lexicon.views.temp_allolex_manual, name='temp_allolex_manual'),
+    #url(r'^temp/temp_allolex_new$', lexicon.views.temp_allolex_new, name='temp_allolex_new'),
 
 
 )
