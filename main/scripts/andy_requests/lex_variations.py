@@ -134,7 +134,8 @@ def main():
     manual_check = {}
     manual_check_cnt = 0
 
-    multiple = {}
+    #multiple = {}
+    multiple = []
 
     no_matches = {}
     no_matches_cnt = 0
@@ -178,6 +179,7 @@ def main():
                                     potential.append(h_lexid)
                                     # print(h_lexid,lexicon[h_lexid]['lex'],lexicon[h_lexid]['pos'],lexicon[h_lexid]['gloss'])
 
+
                     # if exact matching pos is found
                     elif pos in h_initial[h_lex]:
                         h_lexid = h_initial[h_lex][pos][0]
@@ -207,10 +209,12 @@ def main():
                             manual_check_cnt += 1
 
                     elif match_confidence == 6:
-                        multiple[lexid] = []
+                        #multiple[lexid] = []
                         for p_h_lexid in potential:
-                            multiple[lexid].append(lexicon[p_h_lexid])
+                            #multiple[lexid].append(lexicon[p_h_lexid])
                             #print("%s - %s"%(p_h_lexid,lexicon[p_h_lexid]['lex']))
+                            multiple.append((lexid, lex, lexicon[lexid]['pos'], lexicon[lexid]['gloss'], p_h_lexid))
+
                     else:
                         print('Match confidence error: (%s) %s - %s'%(match_confidence, lexid, lex))
 
@@ -248,19 +252,21 @@ def main():
     with open(args.out_path+'/manual.json','w') as fout:
         json.dump(manual_check, fout)
 
-    with open(args.out_path+'/multiple.json','w') as fout:
-        json.dump(multiple, fout)
+    with open(args.out_path+'/multiple.txt','w') as fout: # multiple list per id
+        #json.dump(multiple, fout)
+        for line in multiple:
+            fout.write('|'.join(line)+'\n')
 
     # with open(args.out_path+'/suggested.json','w') as fout:
     #     json.dump(no_matches, fout)
 
-    with open(args.out_path+'/suggested_map.json','w') as fout:
+    with open(args.out_path+'/suggested_map.txt','w') as fout: # csv
         for line in no_matches_map:
-            fout.write(','.join(line)+'\n')
+            fout.write('|'.join(line)+'\n')
 
-    with open(args.out_path+'/no_matches_multiple.json','w') as fout:
+    with open(args.out_path+'/no_matches_multiple.txt','w') as fout: # csv
         for line in no_matches_multiple:
-            fout.write(','.join(line)+'\n')
+            fout.write('|'.join(line)+'\n')
 
 
 main()

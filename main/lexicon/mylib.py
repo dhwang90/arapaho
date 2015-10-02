@@ -374,7 +374,8 @@ def save_to_lexicon(updates_json, lexicon, last_used_lexid):
     for _, update_lexitem in updates_json.items():
         lexid = update_lexitem['lexid']
         del update_lexitem['lexid']
-        del update_lexitem['session_filename'] #added in at adjudicate_file() for the purposes of template
+        if 'session_filename' in update_lexitem:
+            del update_lexitem['session_filename'] #added in at adjudicate_file() for the purposes of template
 
         if lexid.startswith('New'):
             last_used_lexid += 1
