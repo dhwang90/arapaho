@@ -1,0 +1,4 @@
+ref|word|num|dep|label|dep2|label2
+Ad2.001|hoxkuhu,|1||||
+Ad2.001|hinen|2||||
+Ad2.001|no'oteihi!|3||||

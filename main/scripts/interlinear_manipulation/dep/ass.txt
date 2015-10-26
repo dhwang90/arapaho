@@ -1,0 +1,2 @@
+ref|word|num|dep|label|dep2|label2
+ass.001|...|1||||

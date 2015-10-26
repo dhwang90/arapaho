@@ -1,0 +1,7 @@
+ref|word|num|dep|label|dep2|label2
+CHD19a.001|Henee'eehek|1||||
+CHD19a.001|heinoo?|2||||
+CHD19a.002|Henee'eehek|1||||
+CHD19a.002|heisonoo?|2||||
+CHD19a.003|Wo3onohoo|1||||
+CHD19a.003|hiniisih'iitooninoo.|2||||

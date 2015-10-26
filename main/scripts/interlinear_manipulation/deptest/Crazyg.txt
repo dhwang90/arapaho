@@ -1,0 +1,6 @@
+ref|word|num|dep|label|dep2|label2
+Crazyg.001|Henee'eehek|1||||
+Crazyg.001|heih'oxooheiit?|2||||
+Crazyg.002|Hinee|1||||
+Crazyg.002|hohookee?|2||||
+Crazyg.003|Neeneisei'it.|1||||

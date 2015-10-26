@@ -155,14 +155,15 @@ def search(request):
         gloss = request.POST.get('gloss')
         pos = request.POST.get('pos')
         base_form = request.POST.get('base_form')
+        semantic_domain = request.POST.get('semantic_domain')
         show_count = request.POST.get('show_count')
-
-        outlist = fuzzy_search(request.session['lexicon'], lex, gloss, pos, base_form, int(show_count))
+                
+        outlist = fuzzy_search(request.session['lexicon'], lex, gloss, pos, base_form, semantic_domain, int(show_count))
 
         context_instance = RequestContext(request)
 
         if 'editor' in request.session['user_permissions'][request.session['username']]:
-            new_form = {'lex': lex, 'gloss': gloss, 'pos': pos, 'base_form': base_form, 'lexid': 'New', 'form': '',
+            new_form = {'lex': lex, 'gloss': gloss, 'pos': pos, 'base_form': base_form, 'semantic_domain':semantic_domain, 'lexid': 'New', 'form': '',
                         'editmode': 'edit', 'user': '', 'curr_user': request.session['username']}
             new_form['form'] = render_to_string('entry_form.html', new_form, context_instance=context_instance)
 
@@ -170,17 +171,17 @@ def search(request):
                 outlist[i]['editmode'] = 'edit'
                 outlist[i]['curr_user'] = request.session['username']
                 outlist[i]['form'] = render_to_string('entry_form.html', outlist[i], context_instance=context_instance)
-            template_values = {'lex': lex, 'gloss': gloss, 'pos': pos, 'base_form': base_form,
-                               'show_count': show_count, 'new_form': new_form, 'outlist': outlist}
+            template_values = {'lex': lex, 'gloss': gloss, 'pos': pos, 'base_form': base_form, 'semantic_domain':semantic_domain,
+                               'show_count': show_count, 'new_form': new_form, 'outlist': outlist}  
         else:
             for i in range(len(outlist)):
                 outlist[i]['editmode'] = 'view'
                 outlist[i]['form'] = render_to_string('entry_form.html', outlist[i], context_instance=context_instance)
-            template_values = {'lex': lex, 'gloss': gloss, 'pos': pos, 'base_form': base_form,
-                               'show_count': show_count, 'outlist': outlist}
+            template_values = {'lex': lex, 'gloss': gloss, 'pos': pos, 'base_form': base_form, 'semantic_domain': semantic_domain,
+                               'show_count': show_count, 'outlist': outlist} 
 
     else:
-        template_values = {'lex': '', 'gloss': '', 'pos': '', 'base_form': '', 'show_count': '10', 'outlist': []}
+        template_values = {'lex': '', 'gloss': '', 'pos': '', 'base_form': '', 'semantic_domain':'', 'show_count': '10', 'outlist': []} 
 
     if 'open_session' in request.session:
         template_values['open_session'] = request.session['open_session']

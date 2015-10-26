@@ -9,6 +9,7 @@ import os
 import shutil
 import uuid
 from django.conf import settings
+import re
 
 
 PERMISSIONS = {'admin': ('admin', 'editor', 'viewer'),
@@ -48,7 +49,7 @@ def scorer(word, criteria):
     return score
 
 
-def fuzzy_search(lexicon, lex, gloss, pos, base_form, show_count):
+def fuzzy_search(lexicon, lex, gloss, pos, base_form, semantic_domain, show_count):
     outlist = []
     templist = []
     number = 0
@@ -72,6 +73,11 @@ def fuzzy_search(lexicon, lex, gloss, pos, base_form, show_count):
             item_base_form = lexicon[k]['base_form']
         except KeyError:
             item_base_form = ''
+        try:
+            item_semantic_domain = lexicon[k]['semantic_domain']
+        except KeyError:
+            item_semantic_domain = ''
+        
         threshold = 0.0
         score = 0.0
 
@@ -87,6 +93,11 @@ def fuzzy_search(lexicon, lex, gloss, pos, base_form, show_count):
         if base_form:
             threshold += 0.8
             score += scorer(base_form, item_base_form)
+        if semantic_domain:
+#            if item_semantic_domain:
+            if re.search(semantic_domain, item_semantic_domain):
+                threshold += 0.8
+                score += scorer(semantic_domain, item_semantic_domain)
         if score > threshold:
             lexicon[k]['lexid'] = k   # APPEND IN LEX ID for ease of search
             templist.append((score, fix_date(lexicon[k])))
@@ -94,7 +105,8 @@ def fuzzy_search(lexicon, lex, gloss, pos, base_form, show_count):
     templist.sort(key=lambda x: x[0], reverse=True)
     for lexical_item in templist:
         outlist.append(lexical_item[1])
-    return outlist[:show_count]
+#    outlist = sorted(outlist[:show_count], key=lambda k: k['lex'])
+    return outlist[:show_count] #this was outlist[:show_count], and the above line was non-existing
 
 
 def fuzzy_search_select(lexicon, search_string, search_field):
@@ -374,7 +386,8 @@ def save_to_lexicon(updates_json, lexicon, last_used_lexid):
     for _, update_lexitem in updates_json.items():
         lexid = update_lexitem['lexid']
         del update_lexitem['lexid']
-        del update_lexitem['session_filename'] #added in at adjudicate_file() for the purposes of template
+        if 'session_filename' in update_lexitem:
+            del update_lexitem['session_filename'] #added in at adjudicate_file() for the purposes of template
 
         if lexid.startswith('New'):
             last_used_lexid += 1

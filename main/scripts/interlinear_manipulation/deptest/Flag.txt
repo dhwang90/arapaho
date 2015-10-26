@@ -1,0 +1,5 @@
+ref|word|num|dep|label|dep2|label2
+Flag.001|neito'eino',|1||||
+Flag.001|heniiwohoeninoo|2||||
+Flag.001|henii'eenooyoti'.|3||||
+Flag.002|henii'eenoohowu'.|1||||

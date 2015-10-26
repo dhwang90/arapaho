@@ -1,0 +1,5 @@
+ref|word|num|dep|label|dep2|label2
+Moon.001|beetouu3i'ehk,|1||||
+Moon.001|heetko'useiht.|2||||
+Moon.002|heebe3touyoo|1||||
+Moon.002|nii'eenoohowu'.|2||||

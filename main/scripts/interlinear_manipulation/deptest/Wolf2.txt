@@ -1,0 +1,6 @@
+ref|word|num|dep|label|dep2|label2
+Wolf2.001|hinee|1||||
+Wolf2.001|hiinono'eti',|2||||
+Wolf2.001|nee'eetetouuhunoo.|3||||
+Wolf2.002|neneeninoo|1||||
+Wolf2.002|nenii'eihiininoo.|2||||

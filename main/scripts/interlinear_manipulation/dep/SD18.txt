@@ -1,0 +1,4 @@
+ref|word|num|dep|label|dep2|label2
+SD18.001|nii'eihii|1||||
+SD18.001|heniinih'ohuutoneinoo,|2||||
+SD18.002|tohnokooyeinoo.|1||||

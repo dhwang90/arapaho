@@ -1,0 +1,8 @@
+ref|word|num|dep|label|dep2|label2
+DrBa.001|tootouno|1||||
+DrBa.001|niihencebkoohuukoonootoo'hoeno?|2||||
+DrBa.002|Heetnehnoo'eiyeinoo|1||||
+DrBa.002|neyei3eino'oowuu',|2||||
+DrBa.003|Noh|1||||
+DrBa.003|heetkokoh'ohwoonoo.|2||||
+DrBa.004|Kooni'iini?|1||||

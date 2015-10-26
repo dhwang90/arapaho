@@ -1,0 +1,8 @@
+ref|word|num|dep|label|dep2|label2
+Resp.001|Honooneenebeti.|1||||
+Resp.002|Honooneenebin|1||||
+Resp.002|heito'eino'.|2||||
+Resp.003|Heeteenebin|1||||
+Resp.003|beh'eihoho'.|2||||
+Resp.004|Heeteeneetoo|1||||
+Resp.004|heeyouhuu.|2||||

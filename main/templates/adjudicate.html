@@ -65,11 +65,12 @@
             {% endfor %}
         {% endif %}
 
-
         <form action="{% url 'load_adjudications' manual_reload='True' %}" method="post">
             {% csrf_token %}
             <button type="submit">Load more adjudications</button>
         </form>
+
+
 
     </div>
 </div></body>

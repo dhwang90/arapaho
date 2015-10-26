@@ -1,6 +1,8 @@
 from collections import OrderedDict
 import glob
 import os
+import csv
+from os.path import basename
 
 __author__ = 'jena'
 
@@ -9,8 +11,8 @@ def get_text(line):
     return ' '.join(l[1:])
 
 def main():
-    docpath = "/Users/jena/Documents/Research/workspace-pycharm/arapaho/docs/interlinear/textcopy/"
-    docpath_out = docpath+"dep/"
+    docpath = "/Users/ghamzak/Documents/CU Boulder/MyGitHub/arapaho/main/scripts/interlinear_manipulation/"
+    docpath_out = docpath+"deptest/"
     docpath_out_all = docpath+"dep_all/"
 
     if not os.path.exists(docpath_out):
@@ -19,7 +21,7 @@ def main():
 
     for file in glob.glob(docpath+'*.txt'):
         projects = {}
-        with open(file,encoding="latin-1") as fin:
+        with open(file) as fin:
             first_project = True
             first_sentence = True
 
@@ -80,5 +82,17 @@ def main():
                 fout.write(out_text)
 
 
-
 main()
+
+docpath = "/Users/ghamzak/Documents/CU Boulder/MyGitHub/arapaho/main/scripts/interlinear_manipulation/"
+
+for file in glob.glob(docpath+"deptest/"+'*.txt'):
+    fname = os.path.splitext(basename(file))[0]
+    resultFile = open('csvfiles/'+fname+'.csv','w+')
+    wr = csv.writer(resultFile, dialect='excel')
+    with open(file) as fin:
+        lines = [line.strip() for line in fin]
+        d = []
+        for l in lines:
+            d.append(l.split('|'))
+        wr.writerows(d)
