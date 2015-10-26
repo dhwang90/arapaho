@@ -1,0 +1,6 @@
+ref|word|num|dep|label|dep2|label2
+Ann.001|neisonoo|1||||
+Ann.001|houu/|2||||
+Ann.001|nii'eihii|3||||
+Ann.002|beniineinoo.|1||||
+Ann.003|tohuunoooxuneenoo.|1||||

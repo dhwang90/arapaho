@@ -1,0 +1,6 @@
+ref|word|num|dep|label|dep2|label2
+Wolf3.001|honoh'oe,|1||||
+Wolf3.001|koohonoohow?|2||||
+Wolf3.002|neneeninoo|1||||
+Wolf3.002|heneecee|2||||
+Wolf3.002|nihooneih.|3||||

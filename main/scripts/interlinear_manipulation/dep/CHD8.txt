@@ -1,0 +1,8 @@
+ref|word|num|dep|label|dep2|label2
+CHD8.001|A|1||||
+CHD8.001|Nookooyeinoo.|2||||
+CHD8.002|A|1||||
+CHD8.002|Cihbenohu.|2||||
+CHD8.003|B|1||||
+CHD8.003|Bene|2||||
+CHD8.003|nec.|3||||

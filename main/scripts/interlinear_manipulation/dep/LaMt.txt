@@ -1,0 +1,4 @@
+ref|word|num|dep|label|dep2|label2
+LaMt.001|Neetousinihii?|1||||
+LaMt.002|Wohei|1||||
+LaMt.002|heetxouubei'towuune3enee.|2||||

@@ -1,5 +1,6 @@
 import os
 
+#FORCE_SCRIPT_NAME = '/arapaho'
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -7,7 +8,7 @@ TEMPLATE_DEBUG = DEBUG
 SETTINGS_LOCAL = True
 
 if SETTINGS_LOCAL:
-    ROOT_PATH = os.path.dirname('/Users/jena/Documents/Research/workspace3/arapaho/') # for local (jena) use
+    ROOT_PATH = os.path.dirname('/Users/ghamzak/Documents/CU Boulder/MyGitHub/local arapaho from verbs/arapaho/') # for local (Ghazaleh) use
 else:
     ROOT_PATH = os.path.dirname('/data/arapaho/')   # for server use
     # ROOT_PATH = os.path.dirname('__file__')         # for local use (tempermental)
@@ -15,7 +16,7 @@ else:
 # #### BEGIN CUSTOM SETTINGS
 
 # admin bypass temporary save and adjudication?
-ADMIN_BYPASS = False
+ADMIN_BYPASS = True
 
 # where main arapaho_lexicon.json, temp, annotated data sit.
 LEXICON_DATA = os.path.join(ROOT_PATH, 'lexicon_data/')
@@ -94,11 +95,12 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = os.path.join(ROOT_PATH,"main/static/")
+STATIC_ROOT = "/usr/local/apache/htdocs/verbs/arapaho/static/"
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = '/arapaho/static/'
+#STATIC_URL = '/arapaho/static/'
+STATIC_URL = 'https://verbs.colorado.edu/arapaho/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (

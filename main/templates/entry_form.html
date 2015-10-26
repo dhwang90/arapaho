@@ -2,7 +2,7 @@
 <button class="button1" type="button" id='button_modify{{ lexid }}' data-href="modify{{ lexid }}">
     {% if lexid == 'New' %}
         Add New
-    {% elif editmode == 'edit' or editmode == 'adjudication' %}
+    {% elif editmode == 'edit' or editmode == 'adjudication'%} <!-- or editmode == 'adjudication' -->
         View/Modify
     {% else %}
         View

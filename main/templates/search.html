@@ -63,10 +63,15 @@
                 <label>underlying (mn):</label> <input name="base_form" type="text" value="{{ base_form|default_if_none:'' }}"><br>
                 <label>pos (ps):</label> <input name="pos" type="text" value="{{ pos|default_if_none:'' }}"><br>
                 <label>gloss (ge):</label> <input name="gloss" type="text" value="{{ gloss|default_if_none:'' }}"><br>
+                <label>semantic domain (sd):</label> <input name="semantic_domain" type="text" value="{{ semantic_domain|default_if_none:'' }}"><br>
                 <br> show <select name="show_count">
                           <option value="10" {% if show_count == '10' %} selected {% endif %}>10</option>
                           <option value="25" {% if show_count == '25' %} selected {% endif %}>25</option>
                           <option value="50" {% if show_count == '50' %} selected {% endif %}>50</option>
+                          <option value="100" {% if show_count == '100' %} selected {% endif %}>100</option>
+                          <option value="200" {% if show_count == '200' %} selected {% endif %}>200</option>
+        		   	    <option value="400" {% if show_count == '400' %} selected {% endif %}>400</option>
+        			    <option value="600" {% if show_count == '600' %} selected {% endif %}>600</option>
                         </select>
                 matches<br/>
                 <br>
@@ -78,7 +83,7 @@
 
         <!-- IF THERE ARE ANY RESULTS TO DISPLAY -->
 
-        {% if outlist|length > 0 or lex != '' or base_form != '' or pos != '' or gloss != '' %}
+        {% if outlist|length > 0 or lex != '' or base_form != '' or pos != '' or gloss != '' or semantic_domain != '' %}
 
         <h2>Search Results</h2>
         <div id="search_results">

@@ -1,0 +1,6 @@
+ref|word|num|dep|label|dep2|label2
+JokMan.001|Nihnookoniinkoohunoo.|1||||
+JokMan.002|Nihnotiiho'|1||||
+JokMan.002|sosoni'iinen,|2||||
+JokMan.003|Hetwoo3ee3i'|1||||
+JokMan.003|hitei'yooniibinoo.|2||||
